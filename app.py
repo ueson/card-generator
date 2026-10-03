@@ -2,7 +2,6 @@ import streamlit as st
 from PIL import Image, ImageDraw, ImageFont
 import textwrap
 import io
-import streamlit as st
 import os
 import base64
 
@@ -77,10 +76,10 @@ if st.button("カードを生成する"):
         draw = ImageDraw.Draw(card)
 
         # フォント設定
-        font_name = ImageFont.truetype("SourceHanSansJP-Heavy.otf",65)   # name 太字
-        font_cost = ImageFont.truetype("Jersey15-Regular.ttf", 100)   # cost 太字
-        font_type = ImageFont.truetype("SourceHanSansJP-Heavy.otf", 30)   # 属性
-        font_skill = ImageFont.truetype("SourceHanSansJP-Medium.otf", 27) # スキル
+        font_name = ImageFont.truetype("static/fonts/SourceHanSansJP-Heavy.otf",65)   # name 太字
+        font_cost = ImageFont.truetype("static/fonts/Jersey15-Regular.ttf", 100)   # cost 太字
+        font_type = ImageFont.truetype("static/fonts/SourceHanSansJP-Heavy.otf", 30)   # 属性
+        font_skill = ImageFont.truetype("static/fonts/SourceHanSansJP-Medium.otf", 27) # スキル
 
         # name
         name_text = str(name)
