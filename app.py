@@ -11,7 +11,7 @@ with open("static/fonts/Jersey15-Regular.ttf", "rb") as f:
 st.markdown("""
 <style>
 [data-testid="stMainBlockContainer"]{
-    max-width:53%%;
+    max-width:52%%;
 }
 [data-testid="stAppViewContainer"] {
     background: linear-gradient(135deg, #66aaff, #99ccff);
@@ -26,8 +26,8 @@ h1 {
     font-family: 'Jersey15',
     sans-serif !important;
     text-align: center;
-    font-size:125px !important;
-    line-height:1.3 !important;
+    font-size:120px !important;
+    line-height:1.1 !important;
     color: #ffcc33 !important;
     text-shadow: 6px 6px 0px black; !important;
 }
@@ -48,7 +48,7 @@ template_label = st.selectbox("テンプレートを選ぶ", list(template_optio
 template_name = template_options[template_label]
 
 # ▼テンプレートのプレビュー表示
-st.image(f"template/{template_name}", caption=f"{template_label} のプレビュー", width=200)
+st.image(f"template/{template_name}", caption=f"{template_label} のプレビュー", width=170)
 
 name = st.text_input("カード名")
 cost = st.number_input("コスト", min_value=0, max_value=999, step=1)
