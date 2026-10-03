@@ -13,6 +13,12 @@ st.markdown("""
 [data-testid="stMainBlockContainer"]{
     max-width:52%%;
 }
+/* スマホ */
+@media(max-width:768px){
+[data-testid="stMainBlockCotainer"]{
+    max-width:90%%;
+    }
+}
 [data-testid="stAppViewContainer"] {
     background: linear-gradient(135deg, #66aaff, #99ccff);
 }
@@ -26,7 +32,7 @@ h1 {
     font-family: 'Jersey15',
     sans-serif !important;
     text-align: center;
-    font-size:120px !important;
+    font-size: clamp(50px,8vw,120px) !important;
     line-height:1.1 !important;
     color: #ffcc33 !important;
     text-shadow: 6px 6px 0px black; !important;
