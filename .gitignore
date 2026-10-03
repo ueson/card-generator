@@ -1,0 +1,44 @@
+# ===============================
+# ORIGINAL CARD MAKER - .gitignore
+# ===============================
+
+# ▼ 1. 子どものカード画像・アップロード画像を除外
+cards/
+uploads/
+
+# ▼ 2. Streamlit の一時ファイル
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+
+# ▼ 3. OS が勝手に作る不要ファイル
+.DS_Store
+Thumbs.db
+
+# ▼ 4. Python 仮想環境（もし使う場合）
+venv/
+env/
+.venv/
+
+# ▼ 5. ログファイル
+*.log
+
+# ▼ 6. 秘密情報（もし今後追加する場合）
+*.env
+.env.local
+config.json
+
+# ▼ 7. フォントのうち「公開したくないもの」
+fonts/non-commercial/
+fonts/private/
+
+# ▼ 8. Streamlit Cloud のキャッシュ
+.streamlit/
+
+# ▼ 9. その他、誤って入れたくないフォルダ
+tmp/
+backup/
+
+# ▼10.Visual Studio のキャッシュフォルダ
+.vs/
