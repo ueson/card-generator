@@ -14,13 +14,13 @@ st.markdown("""
     max-width:52%%;
 }
 /* スマホ */
-@media(max-width:768px){
+@media(max-width:828px){
 [data-testid="stMainBlockCotainer"]{
-    max-width:90%%;
+    max-width:95%%;
     }
 }
 [data-testid="stAppViewContainer"] {
-    background: linear-gradient(135deg, #66aaff, #99ccff);
+    background: #f7f7f7 !important;
 }
 
 @font-face {
@@ -29,18 +29,35 @@ st.markdown("""
 }
 
 h1 {
+    background: transparent !important;
+    
     font-family: 'Jersey15',
     sans-serif !important;
     text-align: center;
-    font-size: clamp(50px,8vw,120px) !important;
-    line-height:1.1 !important;
+    font-size: clamp(40px,8vw,120px) !important;
+    line-height:1.0 !important;
     color: #ffcc33 !important;
     text-shadow: 6px 6px 0px black; !important;
+    white-space: nowrap !important;
+    padding: 30px 0 !important;
 }
+
+[data-testid="stAppViewContainer"]::before{
+    content:"";
+    position: absolute;
+    top:0;
+    left:50%%;
+    width:100vw;
+    height:250px;
+    background:linear-gradient(135deg, #66aaff, #99ccff);
+    transform:translateX(-50%%);
+    z-index:0;
+}
+
 </style>
 """% font_data,unsafe_allow_html=True)
 
-st.title("ORIGINAL CARD MAKER")
+st.title("ORIGINAL CARD MAKER", width="stretch")
 
 # ▼テンプレート選択（日本語表示）
 template_options = {
@@ -54,11 +71,11 @@ template_label = st.selectbox("テンプレートを選ぶ", list(template_optio
 template_name = template_options[template_label]
 
 # ▼テンプレートのプレビュー表示
-st.image(f"template/{template_name}", caption=f"{template_label} のプレビュー", width=170)
+st.image(f"template/{template_name}", caption=f"{template_label} のプレビュー", width=200)
 
 name = st.text_input("カード名")
-cost = st.number_input("コスト", min_value=0, max_value=999, step=1)
-ctype = st.text_input("属性")
+cost = st.number_input("数字 / コスト", min_value=0, max_value=999, step=1)
+ctype = st.text_input("属性 / 種族")
 skill = st.text_area("スキル", height=200)
 uploaded_img = st.file_uploader("カードの絵をアップロード", type=["png", "jpg", "jpeg"])
 frame = Image.open(f"template/{template_name}").convert("RGBA")
@@ -91,7 +108,7 @@ if st.button("カードを生成する"):
         name_text = str(name)
         bbox = draw.textbbox((0, 0), name_text, font=font_name)
         text_width = bbox[2] - bbox[0]
-        center_x = 570
+        center_x = 550
         draw.text((center_x - text_width/2, 25), name_text, font=font_name, fill="white")
 
          # cost
