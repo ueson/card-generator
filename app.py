@@ -14,7 +14,7 @@ st.markdown("""
     max-width:52%%;
 }
 /* スマホ */
-@media(max-width:1000px){
+@media(max-width:920px){
 [data-testid="stMainBlockContainer"]{
     max-width:95%%;
     }
