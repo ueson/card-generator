@@ -37,7 +37,7 @@ h1 {
     font-size: clamp(40px,4vw,70px) !important;
     line-height:1.1 !important;
     color: #000000 !important;
-    text-shadow: 4px 4px 0px #c0c0c0!important;
+    text-shadow: 2px 2px 0px #c0c0c0!important;
     
     white-space: nowrap !important;
     padding: 30px 0 !important;
@@ -68,7 +68,7 @@ h1 {
 }
 @media (max-width:1000px){
     h1::after {
-        width: 70%%;
+        width: 100%%;
         height: 5px;
         margin-top: 10px;
     }
@@ -84,8 +84,6 @@ template_options = {
     "RED": "red.png",
     "BLUE":"blue.png",
     "YELLOW":"yellow.png",
-
-
     "GREEN":"green.png",
     "GRAY":"gray.png"
 }
