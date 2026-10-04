@@ -59,22 +59,26 @@ h1::after {
     border-radius: 3px;
 }
 
+/* スマホ用 */
 @media (max-width:1000px){
-h1 {
-    width: fit-content;
-    margin: 0 auto;
-    font-size: clamp(28px, 5vw, 55px) !important;
-    white-space: nowrap !important;
-}
-@media (max-width:1000px){
+    h1 {
+        width: fit-content;
+        margin: 0 auto;
+        font-size: clamp(28px, 5vw, 55px) !important;
+        white-space: nowrap !important;
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+
     h1::after {
-        width: 95%%;
+        width: 95% !important;
         height: 5px;
         margin-top: 10px;
         margin-left: auto !important;
         margin-right: auto !important;
     }
 }
+
 }
 </style>
 """% font_data,unsafe_allow_html=True)
