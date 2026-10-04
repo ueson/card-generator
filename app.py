@@ -109,7 +109,7 @@ template_label = st.selectbox("テンプレートを選ぶ", list(template_optio
 template_name = template_options[template_label]
 
 # ▼テンプレートのプレビュー表示
-st.image(f"template/{template_name}", caption=f"{template_label} のプレビュー", width=200)
+st.image(f"template/{template_name}", caption=f"{template_label} のプレビュー", width=150)
 
 name = st.text_input("カード名")
 name_font_size = st.slider("カード名の文字サイズ（※手動で文字を小さくするとき）",min_value=20, max_value=65, value=65, step=1)
@@ -199,7 +199,7 @@ if st.button("カードを生成する"):
         wrapped_skill="\n".join(wrapped_lines)
         draw.multiline_text((60,950),wrapped_skill,font=font_skill,fill="black",spacing=12)
 
-        st.image(card, width=400, caption="生成されたカード")
+        st.image(card, width=350 , caption="生成されたカード")
 
         # ダウンロード用バッファ
         buf = io.BytesIO()
