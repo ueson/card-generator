@@ -59,6 +59,11 @@ h1::after {
     border-radius: 3px;
 }
 
+/* 入力項目のラベルを常に黒にする */
+label{
+    color: #000000 !important;
+}
+
 /* スマホ用 */
 @media (max-width:1000px){
     h1 {
