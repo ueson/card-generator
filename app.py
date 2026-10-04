@@ -14,7 +14,7 @@ st.markdown("""
     max-width:52%%;
 }
 /* スマホ */
-@media(max-width:828px){
+@media(max-width:1000px){
 [data-testid="stMainBlockCotainer"]{
     max-width:95%%;
     }
@@ -37,9 +37,10 @@ h1 {
     font-size: clamp(40px,8vw,120px) !important;
     line-height:1.0 !important;
     color: #ffcc33 !important;
-    text-shadow: 6px 6px 0px black; !important;
+    text-shadow: 4px 4px 0px black !important;
     white-space: nowrap !important;
     padding: 30px 0 !important;
+    margin-top:-50px !important;
 }
 
 [data-testid="stAppViewContainer"]::before{
@@ -48,7 +49,7 @@ h1 {
     top:0;
     left:50%%;
     width:100vw;
-    height:250px;
+    height: 200px;
     background:linear-gradient(135deg, #66aaff, #99ccff);
     transform:translateX(-50%%);
     z-index:0;
