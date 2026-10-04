@@ -64,10 +64,11 @@ h1::after {
     h1 {
         width: fit-content;
         margin: 0 auto;
+        text-align: center !important;
         font-size: clamp(28px, 5vw, 55px) !important;
-        white-space: nowrap !important;
-        padding-left: 10px !important;
-        padding-right: 10px !important;
+        white-space: normal !important; /* ← nowrapだと横幅が広がる */
+        padding-left: 0 !important;
+        padding-right: 0 !important;
     }
 
     h1::after {
