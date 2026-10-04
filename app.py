@@ -5,7 +5,7 @@ import io
 import os
 import base64
 
-with open("static/fonts/Jersey15-Regular.ttf", "rb") as f:
+with open("static/fonts/MavenPro-VariableFont_wght.ttf", "rb") as f:
     font_data = base64.b64encode (f.read()).decode()
 
 st.markdown("""
@@ -24,20 +24,21 @@ st.markdown("""
 }
 
 @font-face {
-    font-family: 'Jersey15';
+    font-family: 'MavenPro';
     src: url("data:font/ttf;base64,%s")format('truetype');
 }
 
 h1 {
     background: transparent !important;
     
-    font-family: 'Jersey15',
+    font-family: 'MavenPro',
     sans-serif !important;
     text-align: center;
-    font-size: clamp(40px,8vw,120px) !important;
-    line-height:1.0 !important;
-    color: #ffcc33 !important;
-    text-shadow: 4px 4px 0px black !important;
+    font-size: clamp(40px,4vw,70px) !important;
+    line-height:1.1 !important;
+    color: #000000 !important;
+    text-shadow: 4px 4px 0px #c0c0c0!important;
+    
     white-space: nowrap !important;
     padding: 30px 0 !important;
     margin-top:-50px !important;
@@ -49,12 +50,11 @@ h1 {
     top:0;
     left:50%%;
     width:100vw;
-    height: 200px;
-    background:linear-gradient(135deg, #66aaff, #99ccff);
+    height: 180px;
+    background:linear-gradient(135deg, #E6E5E4, #E6E6E6);
     transform:translateX(-50%%);
     z-index:0;
 }
-
 </style>
 """% font_data,unsafe_allow_html=True)
 
@@ -65,6 +65,8 @@ template_options = {
     "RED": "red.png",
     "BLUE":"blue.png",
     "YELLOW":"yellow.png",
+
+
     "GREEN":"green.png",
     "GRAY":"gray.png"
 }
@@ -75,8 +77,10 @@ template_name = template_options[template_label]
 st.image(f"template/{template_name}", caption=f"{template_label} のプレビュー", width=200)
 
 name = st.text_input("カード名")
-cost = st.number_input("数字 / コスト", min_value=0, max_value=999, step=1)
-ctype = st.text_input("属性 / 種族")
+name_font_size = st.slider("カード名の文字サイズ（※手動で文字を小さくするとき）",min_value=20, max_value=65, value=65, step=1)
+st.caption("※カード名が長い場合は、自動で文字が小さくなります")
+cost = st.number_input("数字（No. / コスト）", min_value=0, max_value=999, step=1)
+ctype = st.text_input("タイプ（属性 / 種族）")
 skill = st.text_area("スキル", height=200)
 uploaded_img = st.file_uploader("カードの絵をアップロード", type=["png", "jpg", "jpeg"])
 frame = Image.open(f"template/{template_name}").convert("RGBA")
@@ -100,17 +104,30 @@ if st.button("カードを生成する"):
         draw = ImageDraw.Draw(card)
 
         # フォント設定
-        font_name = ImageFont.truetype("static/fonts/SourceHanSansJP-Heavy.otf",65)   # name 太字
         font_cost = ImageFont.truetype("static/fonts/Jersey15-Regular.ttf", 100)   # cost 太字
         font_type = ImageFont.truetype("static/fonts/SourceHanSansJP-Heavy.otf", 30)   # 属性
         font_skill = ImageFont.truetype("static/fonts/SourceHanSansJP-Medium.otf", 27) # スキル
 
         # name
         name_text = str(name)
+        max_name_width = 760
+        current_size = name_font_size
+        
+        while current_size >= 20:
+            test_font = ImageFont.truetype("static/fonts/SourceHanSansJP-Heavy.otf",current_size)
+            bbox = draw.textbbox((0, 0), name_text, font=test_font)
+            text_width = bbox[2] - bbox[0]
+            
+            if text_width <= max_name_width:
+               break
+            current_size -= 1
+            
+        font_name = ImageFont.truetype("static/fonts/SourceHanSansJP-Heavy.otf",current_size)   # name 太字
         bbox = draw.textbbox((0, 0), name_text, font=font_name)
         text_width = bbox[2] - bbox[0]
-        center_x = 550
-        draw.text((center_x - text_width/2, 25), name_text, font=font_name, fill="white")
+        center_x = 570
+        draw.text((center_x - text_width / 2, 25),name_text,font=font_name,fill="white"
+        )
 
          # cost
         cost_text = str(cost)
@@ -128,10 +145,24 @@ if st.button("カードを生成する"):
 
         # skill（黒・自動折り返し）
         skill_text = str(skill)
-        lines = skill_text.split("\n")
-        wrapped_lines = [textwrap.fill(line, width=33) for line in lines]
-        wrapped_skill = "\n".join(wrapped_lines)
-        draw.multiline_text((60, 950), wrapped_skill, font=font_skill, fill="black", spacing=12)
+        max_skill_width=870
+        wrapped_lines=[]
+
+        #入力した改行も維持する
+        for line in skill_text.split("\n"):
+            current_line=""
+            for char in line:
+                test_line=current_line+char
+                bbox=draw.textbbox((0,0),test_line,font=font_skill)
+                text_width=bbox[2]-bbox[0]
+                if text_width <=max_skill_width:
+                    current_line=test_line
+                else:
+                    if current_line:wrapped_lines.append(current_line)
+                    current_line=char
+            if current_line:wrapped_lines.append(current_line)
+        wrapped_skill="\n".join(wrapped_lines)
+        draw.multiline_text((60,950),wrapped_skill,font=font_skill,fill="black",spacing=12)
 
         st.image(card, width=450, caption="生成されたカード")
 
