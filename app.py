@@ -68,7 +68,7 @@ h1 {
 }
 @media (max-width:1000px){
     h1::after {
-        width: 100%%;
+        width: 95%%;
         height: 5px;
         margin-top: 10px;
     }
