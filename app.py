@@ -15,7 +15,7 @@ st.markdown("""
 }
 /* スマホ */
 @media(max-width:1000px){
-[data-testid="stMainBlockCotainer"]{
+[data-testid="stMainBlockContainer"]{
     max-width:95%%;
     }
 }
