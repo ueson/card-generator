@@ -65,9 +65,8 @@ h1::after {
         width: fit-content;
         margin: 0 auto;
         text-align: center !important;
-        font-size: clamp(25px, 5vw, 50px) !important;
+        font-size: clamp(27px, 5vw, 50px) !important;
         white-space: normal !important; /* ← nowrapだと横幅が広がる */
-        letter-spacing: -1px;
         padding-left: 0 !important;
         padding-right: 0 !important;
     }
@@ -76,8 +75,8 @@ h1::after {
         width: 100%% !important;
         height: 5px;
         margin-top: 10px;
-        margin-left: auto !important;
-        margin-right: auto !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
     }
 }
 
