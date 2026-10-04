@@ -66,9 +66,9 @@ h1 {
     font-size: clamp(28px, 5vw, 55px) !important;
     white-space: nowrap !important;
 }
-@media (max-width:1000px){
+@media (max-width:920px){
     h1::after {
-        width: 95%%;
+        width: 100%%;
         height: 5px;
         margin-top: 10px;
     }
