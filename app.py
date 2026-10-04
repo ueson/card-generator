@@ -44,16 +44,19 @@ h1 {
     margin-top:-50px !important;
 }
 
-[data-testid="stAppViewContainer"]::before{
-    content:"";
-    position: absolute;
-    top:0;
-    left:50%%;
-    width:100vw;
-    height: 180px;
-    background:linear-gradient(135deg, #E6E5E4, #E6E6E6);
-    transform:translateX(-50%%);
-    z-index:0;
+h1 {
+    position: relative;
+}
+
+/* タイトル下の黄色ライン */
+h1::after {
+    content: "";
+    display: block;
+    width: 100%%;
+    height: 6px;
+    background: #FFD84D; 
+    margin: 12px auto 0;
+    border-radius: 3px;
 }
 
 @media (max-width:1000px){
@@ -62,6 +65,13 @@ h1 {
     margin: 0 auto;
     font-size: clamp(28px, 5vw, 55px) !important;
     white-space: nowrap !important;
+}
+@media (max-width:1000px){
+    h1::after {
+        width: 70%%;
+        height: 5px;
+        margin-top: 10px;
+    }
 }
 }
 </style>
