@@ -199,7 +199,7 @@ if st.button("カードを生成する"):
         wrapped_skill="\n".join(wrapped_lines)
         draw.multiline_text((60,950),wrapped_skill,font=font_skill,fill="black",spacing=12)
 
-        st.image(card, width=350 , caption="生成されたカード")
+        st.image(card, width=320 , caption="生成されたカード")
 
         # ダウンロード用バッファ
         buf = io.BytesIO()
