@@ -71,7 +71,7 @@ h1::after {
     }
 
     h1::after {
-        width: 95% !important;
+        width: 95%% !important;
         height: 5px;
         margin-top: 10px;
         margin-left: auto !important;
