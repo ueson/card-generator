@@ -1,5 +1,5 @@
 import streamlit as st
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 import textwrap
 import io
 import os
@@ -99,14 +99,27 @@ st.title("ORIGINAL CARD MAKER", width="stretch")
 
 # ▼テンプレート選択（日本語表示）
 template_options = {
-    "RED": "red.png",
-    "BLUE":"blue.png",
-    "YELLOW":"yellow.png",
-    "GREEN":"green.png",
-    "GRAY":"gray.png"
+    "RED": "standard_red.png",
+    "BLUE":"standard_blue.png",
+    "YELLOW":"standard_yellow.png",
+    "GREEN":"standard_green.png",
+    "GRAY":"standard_gray.png",
+    "フルイメージ":"full_image.png",
+    "フルテキスト":"full_text.png"
 }
 template_label = st.selectbox("テンプレートを選ぶ", list(template_options.keys()))
 template_name = template_options[template_label]
+
+# ▼テンプレートごとの設定
+if template_name.startswith("standard_"):
+    image_size=(980,845)
+    image_position=(40,120)
+elif template_name =="full_image.png":
+    image_size=(980,1300)
+    image_position=(40,120)     
+elif template_name =="full_text.png":
+    image_size=(0,0)
+    image_position=(0,0)
 
 # ▼テンプレートのプレビュー表示
 st.image(f"template/{template_name}", caption=f"{template_label} のプレビュー", width=150)
@@ -117,23 +130,30 @@ st.caption("※カード名が長い場合は、自動で文字が小さくな�
 cost = st.number_input("数字（No. / コスト）", min_value=0, max_value=999, step=1)
 ctype = st.text_input("タイプ（属性 / 種族）")
 skill = st.text_area("スキル", height=200)
-uploaded_img = st.file_uploader("カードの絵をアップロード", type=["png", "jpg", "jpeg"])
+if template_name=="full_text.png":
+    uploaded_img=None
+else: uploaded_img = st.file_uploader("カードの絵をアップロード", type=["png", "jpg", "jpeg"])
 frame = Image.open(f"template/{template_name}").convert("RGBA")
 card = Image.new("RGBA", frame.size, (255, 255, 255, 0))
 
 if st.button("カードを生成する"):
-    if uploaded_img:
-        art = Image.open(uploaded_img).convert("RGBA")
+    if uploaded_img or template_name=="full_text.png":
+        if uploaded_img:
+            art= Image.open(uploaded_img).convert("RGBA")
 
-        # テンプレート読み込み
-        frame = Image.open(f"template/{template_name}").convert("RGBA")
+            # テンプレート読み込み
+            frame = Image.open(f"template/{template_name}").convert("RGBA")
         
-        # 絵をリサイズして統一
-        resized_art = art.resize((980,845)).convert("RGBA")
+            # 絵を縦横比を維持してリサイズ＆トリミング
+            resized_art = ImageOps.fit(
+                art,
+                image_size,
+                method=Image.Resampling.LANCZOS,
+                centering=(0.5, 0.4)
+            ).convert("RGBA")
 
-        # 絵の貼り付け
-        card.paste(resized_art, (40, 120), resized_art)
-
+            # 絵の貼り付け
+            card.paste(resized_art, image_position, resized_art)
         card = Image.alpha_composite(card, frame)
 
         draw = ImageDraw.Draw(card)
@@ -197,7 +217,13 @@ if st.button("カードを生成する"):
                     current_line=char
             if current_line:wrapped_lines.append(current_line)
         wrapped_skill="\n".join(wrapped_lines)
-        draw.multiline_text((60,950),wrapped_skill,font=font_skill,fill="black",spacing=12)
+        if template_name == "full_text.png":
+            skill_x=80
+            skill_y=200
+        else:
+            skill_x=60
+            skill_y=950
+        draw.multiline_text((skill_x,skill_y),wrapped_skill,font=font_skill,fill="black",spacing=12)
 
         st.image(card, width=320 , caption="生成されたカード")
 
