@@ -6,9 +6,6 @@ import os
 import base64
 import json
 
-SAVE_DIR = "saved_cards"
-os.makedirs(SAVE_DIR, exist_ok=True)
-
 with open("static/fonts/MavenPro-VariableFont_wght.ttf", "rb") as f:
     font_data = base64.b64encode (f.read()).decode()
 
@@ -129,46 +126,58 @@ elif template_name =="full_text.png":
 st.image(f"template/{template_name}", caption=f"{template_label} のプレビュー", width=150)
 
 # ▼ 保存済みカード一覧
-st.subheader("💾 保存済みカード")
-saved_files = [
-    f for f in os.listdir(SAVE_DIR)
-    if f.endswith(".json")
-]
-if saved_files:
-    selected_file = st.selectbox(
-        "保存済みカードを選択",
-        saved_files
-    )
-    if st.button("📂 このカードを読み込む", key="load_card"):
-        file_path = os.path.join(SAVE_DIR, selected_file)
-        with open(file_path, "r", encoding="utf-8") as f:
-            loaded_data = json.load(f)
+st.subheader("💾 JSONファイルからカードを読み込む")
 
-        # 読み込んだデータを入力欄に直接セット
-        st.session_state["card_name"] = loaded_data.get("name", "")
-        st.session_state["name_font_size"] = loaded_data.get("name_font_size", 65)
-        st.session_state["cost"] = loaded_data.get("cost", 0)
-        st.session_state["ctype"] = loaded_data.get("ctype", "")
-        st.session_state["skill"] = loaded_data.get("skill", "")
+uploaded_json = st.file_uploader(
+    "保存したJSONファイルを選択",
+    type=["json"],
+    key="json_loader"
+)
 
-        if loaded_data.get("image"):
-            st.session_state["loaded_image_bytes"] = base64.b64decode(
-                loaded_data["image"]
+if uploaded_json is not None:
+    if st.button("📂 このカードを読み込む", key="load_json_card"):
+        try:
+            loaded_data = json.load(uploaded_json)
+
+            # 読み込んだデータを入力欄にセット
+            st.session_state["card_name"] = loaded_data.get("name", "")
+            st.session_state["name_font_size"] = loaded_data.get(
+                "name_font_size", 65
             )
-        else:
-            st.session_state["loaded_image_bytes"] = None
+            st.session_state["cost"] = loaded_data.get("cost", 0)
+            st.session_state["ctype"] = loaded_data.get("ctype", "")
+            st.session_state["skill"] = loaded_data.get("skill", "")
 
-        st.session_state["selected_file"]=selected_file
-        st.session_state["uploader_version"]+=1
-        st.rerun()
+            # 画像データを復元
+            if loaded_data.get("image"):
+                st.session_state["loaded_image_bytes"] = base64.b64decode(
+                    loaded_data["image"]
+                )
+            else:
+                st.session_state["loaded_image_bytes"] = None
 
-else:
-    st.info("まだ保存されているカードはありません。")
+            # テンプレートを復元
+            st.session_state["selected_template"] = loaded_data.get(
+                "template_name", ""
+            )
 
+            # 画像アップロード欄をリセット
+            st.session_state["uploader_version"] += 1
+
+            st.success("カードデータを読み込みました！")
+            st.rerun()
+
+        except (json.JSONDecodeError, KeyError, ValueError) as e:
+            st.error(f"JSONファイルを読み込めませんでした: {e}")
 name = st.text_input(
     "カード名",
     key="card_name"
 )
+# 初期値を Session State にセット（初回のみ）
+if "name_font_size" not in st.session_state:
+    st.session_state["name_font_size"] = 65
+
+# スライダー（value は session_state の値を使う）
 name_font_size = st.slider(
     "カード名の文字サイズ（※手動で文字を小さくするとき）",
     min_value=20,
@@ -227,7 +236,7 @@ def save_card():
         "skill": skill,
     }
 
-    # アップロード画像がある場合
+    # アップロード画像、または読み込んだ画像を取得
     if uploaded_img:
         img_bytes = uploaded_img.getvalue()
 
@@ -237,6 +246,7 @@ def save_card():
     else:
         img_bytes = None
 
+    # 画像データをJSONに含める
     if img_bytes:
         card_data["image"] = base64.b64encode(
             img_bytes
@@ -244,51 +254,22 @@ def save_card():
     else:
         card_data["image"] = None
 
-    filename = os.path.join(SAVE_DIR, f"{name}.json")
+    # JSONデータをダウンロードできる形にする
+    json_data = json.dumps(
+        card_data,
+        ensure_ascii=False,
+        indent=2
+    )
 
-    with open(filename, "w", encoding="utf-8") as f:
-        json.dump(card_data, f, ensure_ascii=False, indent=2)
-
-    st.success("カードデータを保存しました！")
-
+    st.download_button(
+        label="📥 JSONファイルをダウンロード",
+        data=json_data,
+        file_name=f"{name or 'カード'}.json",
+        mime="application/json",
+        key="download_card_json"
+    )
 if st.button("カードを保存する"):
     save_card()
-
-if st.button("🔄 このカードを更新する"):
-    selected_file = st.session_state.get("selected_file")
-
-    if selected_file:
-        file_path = os.path.join(SAVE_DIR, selected_file)
-
-        card_data = {
-            "template_name": template_name,
-            "name": name,
-            "name_font_size": name_font_size,
-            "cost": cost,
-            "ctype": ctype,
-            "skill": skill,
-        }
-
-        if uploaded_img:
-            img_bytes = uploaded_img.getvalue()
-            st.session_state["loaded_image_bytes"]=img_bytes
-            card_data["image"] = base64.b64encode(img_bytes).decode("utf-8")
-
-        elif st.session_state.get("loaded_image_bytes"):
-            card_data["image"] = base64.b64encode(
-                st.session_state["loaded_image_bytes"]
-            ).decode("utf-8")
-
-        else:
-            card_data["image"] = None
-
-        with open(file_path, "w", encoding="utf-8") as f:
-            json.dump(card_data, f, ensure_ascii=False, indent=2)
-
-        st.success("カードを更新しました！")
-
-    else:
-        st.warning("先に保存済みカードを読み込んでください。")
 
 if st.button("カードを生成する"):
     if uploaded_img or st.session_state.get("loaded_image_bytes") or template_name == "full_text.png":
