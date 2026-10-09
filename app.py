@@ -177,6 +177,7 @@ name_font_size = st.slider(
     "カード名の文字サイズ（※手動で文字を小さくするとき）",
     min_value=20,
     max_value=65,
+    value=65,
     step=1,
     key="name_font_size"
 )
