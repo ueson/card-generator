@@ -227,7 +227,7 @@ def save_card():
         "skill": skill,
     }
 
-    # アップロード画像がある場合
+    # アップロード画像、または読み込んだ画像を取得
     if uploaded_img:
         img_bytes = uploaded_img.getvalue()
 
@@ -237,6 +237,7 @@ def save_card():
     else:
         img_bytes = None
 
+    # 画像データをJSONに含める
     if img_bytes:
         card_data["image"] = base64.b64encode(
             img_bytes
@@ -244,13 +245,20 @@ def save_card():
     else:
         card_data["image"] = None
 
-    filename = os.path.join(SAVE_DIR, f"{name}.json")
+    # JSONデータをダウンロードできる形にする
+    json_data = json.dumps(
+        card_data,
+        ensure_ascii=False,
+        indent=2
+    )
 
-    with open(filename, "w", encoding="utf-8") as f:
-        json.dump(card_data, f, ensure_ascii=False, indent=2)
-
-    st.success("カードデータを保存しました！")
-
+    st.download_button(
+        label="📥 JSONファイルをダウンロード",
+        data=json_data,
+        file_name=f"{name or 'カード'}.json",
+        mime="application/json",
+        key="download_card_json"
+    )
 if st.button("カードを保存する"):
     save_card()
 
