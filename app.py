@@ -6,9 +6,6 @@ import os
 import base64
 import json
 
-SAVE_DIR = "saved_cards"
-os.makedirs(SAVE_DIR, exist_ok=True)
-
 with open("static/fonts/MavenPro-VariableFont_wght.ttf", "rb") as f:
     font_data = base64.b64encode (f.read()).decode()
 
