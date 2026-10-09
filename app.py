@@ -129,42 +129,49 @@ elif template_name =="full_text.png":
 st.image(f"template/{template_name}", caption=f"{template_label} のプレビュー", width=150)
 
 # ▼ 保存済みカード一覧
-st.subheader("💾 保存済みカード")
-saved_files = [
-    f for f in os.listdir(SAVE_DIR)
-    if f.endswith(".json")
-]
-if saved_files:
-    selected_file = st.selectbox(
-        "保存済みカードを選択",
-        saved_files
-    )
-    if st.button("📂 このカードを読み込む", key="load_card"):
-        file_path = os.path.join(SAVE_DIR, selected_file)
-        with open(file_path, "r", encoding="utf-8") as f:
-            loaded_data = json.load(f)
+st.subheader("💾 JSONファイルからカードを読み込む")
 
-        # 読み込んだデータを入力欄に直接セット
-        st.session_state["card_name"] = loaded_data.get("name", "")
-        st.session_state["name_font_size"] = loaded_data.get("name_font_size", 65)
-        st.session_state["cost"] = loaded_data.get("cost", 0)
-        st.session_state["ctype"] = loaded_data.get("ctype", "")
-        st.session_state["skill"] = loaded_data.get("skill", "")
+uploaded_json = st.file_uploader(
+    "保存したJSONファイルを選択",
+    type=["json"],
+    key="json_loader"
+)
 
-        if loaded_data.get("image"):
-            st.session_state["loaded_image_bytes"] = base64.b64decode(
-                loaded_data["image"]
+if uploaded_json is not None:
+    if st.button("📂 このカードを読み込む", key="load_json_card"):
+        try:
+            loaded_data = json.load(uploaded_json)
+
+            # 読み込んだデータを入力欄にセット
+            st.session_state["card_name"] = loaded_data.get("name", "")
+            st.session_state["name_font_size"] = loaded_data.get(
+                "name_font_size", 65
             )
-        else:
-            st.session_state["loaded_image_bytes"] = None
+            st.session_state["cost"] = loaded_data.get("cost", 0)
+            st.session_state["ctype"] = loaded_data.get("ctype", "")
+            st.session_state["skill"] = loaded_data.get("skill", "")
 
-        st.session_state["selected_file"]=selected_file
-        st.session_state["uploader_version"]+=1
-        st.rerun()
+            # 画像データを復元
+            if loaded_data.get("image"):
+                st.session_state["loaded_image_bytes"] = base64.b64decode(
+                    loaded_data["image"]
+                )
+            else:
+                st.session_state["loaded_image_bytes"] = None
 
-else:
-    st.info("まだ保存されているカードはありません。")
+            # テンプレートを復元
+            st.session_state["selected_template"] = loaded_data.get(
+                "template_name", ""
+            )
 
+            # 画像アップロード欄をリセット
+            st.session_state["uploader_version"] += 1
+
+            st.success("カードデータを読み込みました！")
+            st.rerun()
+
+        except (json.JSONDecodeError, KeyError, ValueError) as e:
+            st.error(f"JSONファイルを読み込めませんでした: {e}")
 name = st.text_input(
     "カード名",
     key="card_name"
