@@ -269,42 +269,6 @@ def save_card():
 if st.button("カードを保存する"):
     save_card()
 
-if st.button("🔄 このカードを更新する"):
-    selected_file = st.session_state.get("selected_file")
-
-    if selected_file:
-        file_path = os.path.join(SAVE_DIR, selected_file)
-
-        card_data = {
-            "template_name": template_name,
-            "name": name,
-            "name_font_size": name_font_size,
-            "cost": cost,
-            "ctype": ctype,
-            "skill": skill,
-        }
-
-        if uploaded_img:
-            img_bytes = uploaded_img.getvalue()
-            st.session_state["loaded_image_bytes"]=img_bytes
-            card_data["image"] = base64.b64encode(img_bytes).decode("utf-8")
-
-        elif st.session_state.get("loaded_image_bytes"):
-            card_data["image"] = base64.b64encode(
-                st.session_state["loaded_image_bytes"]
-            ).decode("utf-8")
-
-        else:
-            card_data["image"] = None
-
-        with open(file_path, "w", encoding="utf-8") as f:
-            json.dump(card_data, f, ensure_ascii=False, indent=2)
-
-        st.success("カードを更新しました！")
-
-    else:
-        st.warning("先に保存済みカードを読み込んでください。")
-
 if st.button("カードを生成する"):
     if uploaded_img or st.session_state.get("loaded_image_bytes") or template_name == "full_text.png":
 
