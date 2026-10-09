@@ -287,15 +287,20 @@ if st.button("カードを生成する"):
         frame = Image.open(f"template/{template_name}").convert("RGBA")
 
         # 絵を縦横比を維持してリサイズ＆トリミング
-        resized_art = ImageOps.fit(
-            art,
-            image_size,
-            method=Image.Resampling.LANCZOS,
-            centering=(0.5, 0.4)
-        ).convert("RGBA")
+        # ▼ フルテキストテンプレートの場合は画像処理をスキップ
+        if template_name == "full_text.png":
+            resized_art = None
+        else:
+            resized_art = ImageOps.fit(
+                art,
+                image_size,
+                method=Image.Resampling.LANCZOS,
+                centering=(0.5, 0.4)
+            ).convert("RGBA")
 
-        # 絵の貼り付け
-        card.paste(resized_art, image_position, resized_art)
+        # 画像がある場合だけ貼り付け
+        if resized_art is not None:
+            card.paste(resized_art, image_position, resized_art)
         card = Image.alpha_composite(card, frame)
         draw = ImageDraw.Draw(card)
 
