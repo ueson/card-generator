@@ -300,6 +300,7 @@ if st.button("カードを生成する"):
             art = Image.open(
                 io.BytesIO(st.session_state["loaded_image_bytes"])
             ).convert("RGBA")
+        else: art=Image.new("RGBA",image_size,(0,0,0,0))
 
         # テンプレート読み込み
         frame = Image.open(f"template/{template_name}").convert("RGBA")
