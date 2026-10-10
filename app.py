@@ -21,7 +21,34 @@ st.markdown("""
     }
 }
 [data-testid="stAppViewContainer"] {
-    background: #f7f7f7 !important;
+    background: #F5F5F5 !important;
+}
+/* ▼ Streamlitのメインコンテナ：薄グレー */
+section.main {
+    background-color: #F5F5F5 !important;
+}
+/* ▼ サイドバー：薄グレー*/
+div[data-testid="stSidebar"] {
+    background-color: #F5F5F5 !important;
+}
+/* ▼ タイトル・見出し：濃いグレー */
+h1, h2, h3, h4, h5, h6 {
+    color: #333333 !important;
+}
+
+/* Streamlitボタン：水色 */
+div.stButton > button {
+    background-color: #4DB8FF !important;
+    color: white !important;
+    border-radius: 8px !important;
+    border: none !important;
+    padding: 0.6em 1.2em !important;
+    font-weight: bold !important;
+}
+/* ホバー時（PC用） */
+div.stButton > button:hover {
+    background-color: #3FA9F5 !important;
+    color: #FFFFFF !important;
 }
 
 @font-face {
@@ -37,7 +64,7 @@ h1 {
     text-align: center;
     font-size: clamp(40px,4vw,70px) !important;
     line-height:1.1 !important;
-    color: #000000 !important;
+    color: #333333 !important;
     text-shadow: 2px 2px 0px #c0c0c0!important;
     
     white-space: nowrap !important;
@@ -55,20 +82,14 @@ h1::after {
     display: block;
     width: 100%%;
     height: 6px;
-    background: #FFD84D; 
+    background: #FFCC00; 
     margin: 12px auto 0;
     border-radius: 3px;
 }
 
-/* 入力項目のラベルを常に黒にする */
-label{
-    color: #000000 !important;
-}
-
 /* スマホ用 */
 @media (max-width:1000px){
-    [data-testid="stImage"]img
-    {
+    [data-testid="stImage"]img{
         max-width:90vw !important;
         height:auto !important;
     }
@@ -126,7 +147,7 @@ elif template_name =="full_text.png":
 st.image(f"template/{template_name}", caption=f"{template_label} のプレビュー", width=150)
 
 # ▼ 保存済みカード一覧
-st.subheader("💾 JSONファイルからカードを読み込む")
+st.subheader("📜 JSONからカードを読み込む")
 
 uploaded_json = st.file_uploader(
     "保存したJSONファイルを選択",
