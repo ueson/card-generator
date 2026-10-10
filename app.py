@@ -124,7 +124,6 @@ tab_card, tab_a4 = st.tabs(["カード生成", "A4印刷シート"])
 
 # 🟥 タブ1：カード生成
 with tab_card:
-    st.header("カード生成")
 
     # ▼テンプレート選択（日本語表示）
     template_options = {
@@ -417,7 +416,6 @@ with tab_card:
 
 # 🟦 タブ2：A4印刷シート
 with tab_a4:
-    st.header("A4印刷用シート作成")
     st.write("カード生成画面でダウンロードしたPNGファイルをアップロードして、A4サイズに9枚並べて印刷できます。")
 
     uploaded_png_files = st.file_uploader(
@@ -442,7 +440,7 @@ with tab_a4:
             # A4サイズ（300dpi）
             a4 = Image.new("RGBA", (2480, 3508), "white")
 
-            # 余白なしのピッタリ座標
+            # 余白なし座標
             positions = [
                 (0, 0), (744, 0), (1488, 0),
                 (0, 1040), (744, 1040), (1488, 1040),
