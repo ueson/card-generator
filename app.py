@@ -54,7 +54,7 @@ h1 {
     
     white-space: nowrap !important;
     padding: 30px 0 !important;
-    margin-top:-50px !important;
+    margin-top:-65px !important;
 }
 
 h1 {
