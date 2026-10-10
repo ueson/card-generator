@@ -54,7 +54,7 @@ h1 {
     
     white-space: nowrap !important;
     padding: 30px 0 !important;
-    margin-top:-50px !important;
+    margin-top:-65px !important;
 }
 
 h1 {
@@ -105,7 +105,7 @@ h1::after {
 st.title("ORIGINAL CARD MAKER", width="stretch")
 
 # 📄 タブ構成（カード生成 / A4印刷シート）
-tab_card, tab_a4 = st.tabs(["カード生成", "A4印刷シート"])
+tab_card, tab_a4 = st.tabs([" カード生成 ", " A4印刷シート "])
 
 # 🟥 タブ1：カード生成
 with tab_card:
@@ -159,6 +159,7 @@ with tab_card:
                 st.session_state["cost"] = loaded_data.get("cost", 0)
                 st.session_state["ctype"] = loaded_data.get("ctype", "")
                 st.session_state["skill"] = loaded_data.get("skill", "")
+                st.session_state["power"]=loaded_data.get("power","")
 
                 # 画像データを復元
                 if loaded_data.get("image"):
@@ -209,6 +210,14 @@ with tab_card:
         "タイプ（属性 / 種族）",
         key="ctype"
     )
+    show_power = st.checkbox("パワーを表示する", value=True)
+    power = st.number_input(
+        "パワー",
+        min_value=0,
+        max_value=99999,
+        step=1,
+        key="power"
+    )
     skill = st.text_area(
         "スキル",
         height=200,
@@ -245,6 +254,7 @@ with tab_card:
             "name_font_size": name_font_size,
             "cost": cost,
             "ctype": ctype,
+            "power":power,
             "skill": skill,
         }
 
@@ -319,6 +329,7 @@ with tab_card:
             # フォント設定
             font_cost = ImageFont.truetype("static/fonts/Jersey15-Regular.ttf", 100)   # cost 太字
             font_type = ImageFont.truetype("static/fonts/SourceHanSansJP-Heavy.otf", 30)   # 属性
+            font_power = ImageFont.truetype("static/fonts/Jersey15-Regular.ttf",70)  #パワー
             font_skill = ImageFont.truetype("static/fonts/SourceHanSansJP-Medium.otf", 27) # スキル
 
             # name
@@ -349,12 +360,27 @@ with tab_card:
             center_x = 115
             draw.text((center_x - text_width/2, 48), cost_text, font=font_cost, fill="white")
 
-            # type（白）
+            # type
             ctype_text = str(ctype)
             bbox = draw.textbbox((0, 0), ctype_text, font=font_type)
             text_width = bbox[2] - bbox[0]
             center_x = 150
             draw.text((center_x - text_width/2, 867), ctype_text, font=font_type, fill="black")
+
+            # power
+            if show_power:
+                power_text = str(power)
+                bbox = draw.textbbox((0, 0), power_text, font=font_power)
+                text_width = bbox[2] - bbox[0]
+                center_x = 870
+                draw.text(
+                    (center_x - text_width/2,1350),
+                    power_text,
+                    font=font_power, 
+                    fill="white",  
+                    stroke_width=3,  
+                    stroke_fill="#5e5e5e" 
+                )
 
             # skill（黒・自動折り返し）
             skill_text = str(skill)
