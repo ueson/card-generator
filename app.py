@@ -153,7 +153,7 @@ with tab_card:
     st.image(f"template/{template_name}", caption=f"{template_label} のプレビュー", width=150)
 
     # ▼ 保存済みカード一覧
-    st.subheader("📜 JSONからカードを読み込む")
+    st.markdown("#### 📜 カードデータを読み込む")
 
     uploaded_json = st.file_uploader(
         "保存したJSONファイルを選択",
