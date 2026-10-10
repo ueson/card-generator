@@ -119,290 +119,364 @@ h1::after {
 
 st.title("ORIGINAL CARD MAKER", width="stretch")
 
-# ▼テンプレート選択（日本語表示）
-template_options = {
-    "RED": "standard_red.png",
-    "BLUE":"standard_blue.png",
-    "YELLOW":"standard_yellow.png",
-    "GREEN":"standard_green.png",
-    "GRAY":"standard_gray.png",
-    "フルイメージ":"full_image.png",
-    "フルテキスト":"full_text.png"
-}
-template_label = st.selectbox("テンプレートを選ぶ", list(template_options.keys()))
-template_name = template_options[template_label]
+# 📄 タブ構成（カード生成 / A4印刷シート）
+tab_card, tab_a4 = st.tabs(["カード生成", "A4印刷シート"])
 
-# ▼テンプレートごとの設定
-if template_name.startswith("standard_"):
-    image_size=(980,845)
-    image_position=(40,120)
-elif template_name =="full_image.png":
-    image_size=(980,1300)
-    image_position=(40,120)     
-elif template_name =="full_text.png":
-    image_size=(0,0)
-    image_position=(0,0)
+# 🟥 タブ1：カード生成
+with tab_card:
+    st.header("カード生成")
 
-# ▼テンプレートのプレビュー表示
-st.image(f"template/{template_name}", caption=f"{template_label} のプレビュー", width=150)
-
-# ▼ 保存済みカード一覧
-st.subheader("📜 JSONからカードを読み込む")
-
-uploaded_json = st.file_uploader(
-    "保存したJSONファイルを選択",
-    type=["json"],
-    key="json_loader"
-)
-
-if uploaded_json is not None:
-    if st.button("📂 このカードを読み込む", key="load_json_card"):
-        try:
-            loaded_data = json.load(uploaded_json)
-
-            # 読み込んだデータを入力欄にセット
-            st.session_state["card_name"] = loaded_data.get("name", "")
-            st.session_state["name_font_size"] = loaded_data.get(
-                "name_font_size", 65
-            )
-            st.session_state["cost"] = loaded_data.get("cost", 0)
-            st.session_state["ctype"] = loaded_data.get("ctype", "")
-            st.session_state["skill"] = loaded_data.get("skill", "")
-
-            # 画像データを復元
-            if loaded_data.get("image"):
-                st.session_state["loaded_image_bytes"] = base64.b64decode(
-                    loaded_data["image"]
-                )
-            else:
-                st.session_state["loaded_image_bytes"] = None
-
-            # テンプレートを復元
-            st.session_state["selected_template"] = loaded_data.get(
-                "template_name", ""
-            )
-
-            # 画像アップロード欄をリセット
-            st.session_state["uploader_version"] += 1
-
-            st.success("カードデータを読み込みました！")
-            st.rerun()
-
-        except (json.JSONDecodeError, KeyError, ValueError) as e:
-            st.error(f"JSONファイルを読み込めませんでした: {e}")
-name = st.text_input(
-    "カード名",
-    key="card_name"
-)
-# 初期値を Session State にセット（初回のみ）
-if "name_font_size" not in st.session_state:
-    st.session_state["name_font_size"] = 65
-
-# スライダー（value は session_state の値を使う）
-name_font_size = st.slider(
-    "カード名の文字サイズ（※手動で文字を小さくするとき）",
-    min_value=20,
-    max_value=65,
-    step=1,
-    key="name_font_size"
-)
-st.caption("※カード名が長い場合は、自動で文字が小さくなります")
-cost = st.number_input(
-    "数字（No. / コスト）",
-    min_value=0,
-    max_value=999,
-    step=1,
-    key="cost"
-)
-ctype = st.text_input(
-    "タイプ（属性 / 種族）",
-    key="ctype"
-)
-skill = st.text_area(
-    "スキル",
-    height=200,
-    key="skill"
-)
-if template_name=="full_text.png":
-    uploaded_img=None
-else:
-    if "uploader_version" not in st.session_state:
-        st.session_state["uploader_version"] = 0
-    uploaded_img = st.file_uploader(
-        "カードの絵をアップロード",
-        type=["png", "jpg", "jpeg"],
-        key=f"image_uploader_{st.session_state['uploader_version']}"
-    )
-frame = Image.open(f"template/{template_name}").convert("RGBA")
-card = Image.new("RGBA", frame.size, (255, 255, 255, 0))
-
-if uploaded_img:
-    st.session_state["loaded_image_bytes"]=uploaded_img.getvalue()
-    st.image(uploaded_img, caption="現在選択中の画像", width=200)
-
-elif st.session_state.get("loaded_image_bytes"):
-    st.image(
-        st.session_state["loaded_image_bytes"],
-        caption="保存済みカードから読み込んだ画像",
-        width=200
-    )
-
-def save_card():
-    card_data = {
-        "template_name": template_name,
-        "name": name,
-        "name_font_size": name_font_size,
-        "cost": cost,
-        "ctype": ctype,
-        "skill": skill,
+    # ▼テンプレート選択（日本語表示）
+    template_options = {
+        "RED": "standard_red.png",
+        "BLUE":"standard_blue.png",
+        "YELLOW":"standard_yellow.png",
+        "GREEN":"standard_green.png",
+        "GRAY":"standard_gray.png",
+        "フルイメージ":"full_image.png",
+        "フルテキスト":"full_text.png"
     }
+    template_label = st.selectbox("テンプレートを選ぶ", list(template_options.keys()))
+    template_name = template_options[template_label]
 
-    # アップロード画像、または読み込んだ画像を取得
+    # ▼テンプレートごとの設定
+    if template_name.startswith("standard_"):
+        image_size=(980,845)
+        image_position=(40,120)
+    elif template_name =="full_image.png":
+        image_size=(980,1300)
+        image_position=(40,120)     
+    elif template_name =="full_text.png":
+        image_size=(0,0)
+        image_position=(0,0)
+
+    # ▼テンプレートのプレビュー表示
+    st.image(f"template/{template_name}", caption=f"{template_label} のプレビュー", width=150)
+
+    # ▼ 保存済みカード一覧
+    st.subheader("📜 JSONからカードを読み込む")
+
+    uploaded_json = st.file_uploader(
+        "保存したJSONファイルを選択",
+        type=["json"],
+        key="json_loader"
+    )
+
+    if uploaded_json is not None:
+        if st.button("📂 このカードを読み込む", key="load_json_card"):
+            try:
+                loaded_data = json.load(uploaded_json)
+
+                # 読み込んだデータを入力欄にセット
+                st.session_state["card_name"] = loaded_data.get("name", "")
+                st.session_state["name_font_size"] = loaded_data.get(
+                    "name_font_size", 65
+                )
+                st.session_state["cost"] = loaded_data.get("cost", 0)
+                st.session_state["ctype"] = loaded_data.get("ctype", "")
+                st.session_state["skill"] = loaded_data.get("skill", "")
+
+                # 画像データを復元
+                if loaded_data.get("image"):
+                    st.session_state["loaded_image_bytes"] = base64.b64decode(
+                        loaded_data["image"]
+                    )
+                else:
+                    st.session_state["loaded_image_bytes"] = None
+
+                # テンプレートを復元
+                st.session_state["selected_template"] = loaded_data.get(
+                    "template_name", ""
+                )
+
+                # 画像アップロード欄をリセット
+                st.session_state["uploader_version"] += 1
+
+                st.success("カードデータを読み込みました！")
+                st.rerun()
+
+            except (json.JSONDecodeError, KeyError, ValueError) as e:
+                st.error(f"JSONファイルを読み込めませんでした: {e}")
+    name = st.text_input(
+        "カード名",
+        key="card_name"
+    )
+    # 初期値を Session State にセット（初回のみ）
+    if "name_font_size" not in st.session_state:
+        st.session_state["name_font_size"] = 65
+
+    # スライダー（value は session_state の値を使う）
+    name_font_size = st.slider(
+        "カード名の文字サイズ（※手動で文字を小さくするとき）",
+        min_value=20,
+        max_value=65,
+        step=1,
+        key="name_font_size"
+    )
+    st.caption("※カード名が長い場合は、自動で文字が小さくなります")
+    cost = st.number_input(
+        "数字（No. / コスト）",
+        min_value=0,
+        max_value=999,
+        step=1,
+        key="cost"
+    )
+    ctype = st.text_input(
+        "タイプ（属性 / 種族）",
+        key="ctype"
+    )
+    skill = st.text_area(
+        "スキル",
+        height=200,
+        key="skill"
+    )
+    if template_name=="full_text.png":
+        uploaded_img=None
+    else:
+        if "uploader_version" not in st.session_state:
+            st.session_state["uploader_version"] = 0
+        uploaded_img = st.file_uploader(
+            "カードの絵をアップロード",
+            type=["png", "jpg", "jpeg"],
+            key=f"image_uploader_{st.session_state['uploader_version']}"
+        )
+    frame = Image.open(f"template/{template_name}").convert("RGBA")
+    card = Image.new("RGBA", frame.size, (255, 255, 255, 0))
+
     if uploaded_img:
-        img_bytes = uploaded_img.getvalue()
+        st.session_state["loaded_image_bytes"]=uploaded_img.getvalue()
+        st.image(uploaded_img, caption="現在選択中の画像", width=200)
 
     elif st.session_state.get("loaded_image_bytes"):
-        img_bytes = st.session_state["loaded_image_bytes"]
+        st.image(
+            st.session_state["loaded_image_bytes"],
+            caption="保存済みカードから読み込んだ画像",
+            width=200
+        )
 
-    else:
-        img_bytes = None
+    def save_card():
+        card_data = {
+            "template_name": template_name,
+            "name": name,
+            "name_font_size": name_font_size,
+            "cost": cost,
+            "ctype": ctype,
+            "skill": skill,
+        }
 
-    # 画像データをJSONに含める
-    if img_bytes:
-        card_data["image"] = base64.b64encode(
-            img_bytes
-        ).decode("utf-8")
-    else:
-        card_data["image"] = None
-
-    # JSONデータをダウンロードできる形にする
-    json_data = json.dumps(
-        card_data,
-        ensure_ascii=False,
-        indent=2
-    )
-
-    st.download_button(
-        label="📥 JSONファイルをダウンロード",
-        data=json_data,
-        file_name=f"{name or 'カード'}.json",
-        mime="application/json",
-        key="download_card_json"
-    )
-if st.button("カードを保存する"):
-    save_card()
-
-if st.button("カードを生成する"):
-    if uploaded_img or st.session_state.get("loaded_image_bytes") or template_name == "full_text.png":
-
+        # アップロード画像、または読み込んだ画像を取得
         if uploaded_img:
-            art = Image.open(uploaded_img).convert("RGBA")
+            img_bytes = uploaded_img.getvalue()
 
         elif st.session_state.get("loaded_image_bytes"):
-            art = Image.open(
-                io.BytesIO(st.session_state["loaded_image_bytes"])
-            ).convert("RGBA")
-        else: art=Image.new("RGBA",image_size,(0,0,0,0))
+            img_bytes = st.session_state["loaded_image_bytes"]
 
-        # テンプレート読み込み
-        frame = Image.open(f"template/{template_name}").convert("RGBA")
-
-        # 絵を縦横比を維持してリサイズ＆トリミング
-        # ▼ フルテキストテンプレートの場合は画像処理をスキップ
-        if template_name == "full_text.png":
-            resized_art = None
         else:
-            resized_art = ImageOps.fit(
-                art,
-                image_size,
-                method=Image.Resampling.LANCZOS,
-                centering=(0.5, 0.4)
-            ).convert("RGBA")
+            img_bytes = None
 
-        # 画像がある場合だけ貼り付け
-        if resized_art is not None:
-            card.paste(resized_art, image_position, resized_art)
-        card = Image.alpha_composite(card, frame)
-        draw = ImageDraw.Draw(card)
+        # 画像データをJSONに含める
+        if img_bytes:
+            card_data["image"] = base64.b64encode(
+                img_bytes
+            ).decode("utf-8")
+        else:
+            card_data["image"] = None
 
-        # フォント設定
-        font_cost = ImageFont.truetype("static/fonts/Jersey15-Regular.ttf", 100)   # cost 太字
-        font_type = ImageFont.truetype("static/fonts/SourceHanSansJP-Heavy.otf", 30)   # 属性
-        font_skill = ImageFont.truetype("static/fonts/SourceHanSansJP-Medium.otf", 27) # スキル
-
-        # name
-        name_text = str(name)
-        max_name_width = 760
-        current_size = name_font_size
-        
-        while current_size >= 20:
-            test_font = ImageFont.truetype("static/fonts/SourceHanSansJP-Heavy.otf",current_size)
-            bbox = draw.textbbox((0, 0), name_text, font=test_font)
-            text_width = bbox[2] - bbox[0]
-            
-            if text_width <= max_name_width:
-               break
-            current_size -= 1
-            
-        font_name = ImageFont.truetype("static/fonts/SourceHanSansJP-Heavy.otf",current_size)   # name 太字
-        bbox = draw.textbbox((0, 0), name_text, font=font_name)
-        text_width = bbox[2] - bbox[0]
-        center_x = 570
-        draw.text((center_x - text_width / 2, 25),name_text,font=font_name,fill="white"
+        # JSONデータをダウンロードできる形にする
+        json_data = json.dumps(
+            card_data,
+            ensure_ascii=False,
+            indent=2
         )
 
-        # cost
-        cost_text = str(cost)
-        bbox = draw.textbbox((0, 0), cost_text, font=font_cost)
-        text_width = bbox[2] - bbox[0]
-        center_x = 115
-        draw.text((center_x - text_width/2, 48), cost_text, font=font_cost, fill="white")
-
-        # type（白）
-        ctype_text = str(ctype)
-        bbox = draw.textbbox((0, 0), ctype_text, font=font_type)
-        text_width = bbox[2] - bbox[0]
-        center_x = 150
-        draw.text((center_x - text_width/2, 867), ctype_text, font=font_type, fill="black")
-
-        # skill（黒・自動折り返し）
-        skill_text = str(skill)
-        max_skill_width=870
-        wrapped_lines=[]
-
-        #入力した改行も維持する
-        for line in skill_text.split("\n"):
-            current_line=""
-            for char in line:
-                test_line=current_line+char
-                bbox=draw.textbbox((0,0),test_line,font=font_skill)
-                text_width=bbox[2]-bbox[0]
-                if text_width <=max_skill_width:
-                    current_line=test_line
-                else:
-                    if current_line:wrapped_lines.append(current_line)
-                    current_line=char
-            if current_line:wrapped_lines.append(current_line)
-        wrapped_skill="\n".join(wrapped_lines)
-        if template_name == "full_text.png":
-            skill_x=80
-            skill_y=200
-        else:
-            skill_x=60
-            skill_y=950
-        draw.multiline_text((skill_x,skill_y),wrapped_skill,font=font_skill,fill="black",spacing=12)
-
-        st.image(card, width=320 , caption="生成されたカード")
-
-        # ダウンロード用バッファ
-        buf = io.BytesIO()
-        card.save(buf, format="PNG")
-        byte_im = buf.getvalue()
-
-        # ダウンロードボタン
         st.download_button(
-            label="カードをダウンロードする",
-            data=byte_im,
-            file_name=f"{name}.png",
-            mime="image/png"
+            label="📥 JSONファイルをダウンロード",
+            data=json_data,
+            file_name=f"{name or 'カード'}.json",
+            mime="application/json",
+            key="download_card_json"
         )
+    if st.button("カードを保存する"):
+        save_card()
+
+    if st.button("カードを生成する"):
+        if uploaded_img or st.session_state.get("loaded_image_bytes") or template_name == "full_text.png":
+
+            if uploaded_img:
+                art = Image.open(uploaded_img).convert("RGBA")
+
+            elif st.session_state.get("loaded_image_bytes"):
+                art = Image.open(
+                    io.BytesIO(st.session_state["loaded_image_bytes"])
+                ).convert("RGBA")
+            else: art=Image.new("RGBA",image_size,(0,0,0,0))
+
+            # テンプレート読み込み
+            frame = Image.open(f"template/{template_name}").convert("RGBA")
+
+            # 絵を縦横比を維持してリサイズ＆トリミング
+            # ▼ フルテキストテンプレートの場合は画像処理をスキップ
+            if template_name == "full_text.png":
+                resized_art = None
+            else:
+                resized_art = ImageOps.fit(
+                    art,
+                    image_size,
+                    method=Image.Resampling.LANCZOS,
+                    centering=(0.5, 0.4)
+                ).convert("RGBA")
+
+            # 画像がある場合だけ貼り付け
+            if resized_art is not None:
+                card.paste(resized_art, image_position, resized_art)
+            card = Image.alpha_composite(card, frame)
+            draw = ImageDraw.Draw(card)
+
+            # フォント設定
+            font_cost = ImageFont.truetype("static/fonts/Jersey15-Regular.ttf", 100)   # cost 太字
+            font_type = ImageFont.truetype("static/fonts/SourceHanSansJP-Heavy.otf", 30)   # 属性
+            font_skill = ImageFont.truetype("static/fonts/SourceHanSansJP-Medium.otf", 27) # スキル
+
+            # name
+            name_text = str(name)
+            max_name_width = 760
+            current_size = name_font_size
+            
+            while current_size >= 20:
+                test_font = ImageFont.truetype("static/fonts/SourceHanSansJP-Heavy.otf",current_size)
+                bbox = draw.textbbox((0, 0), name_text, font=test_font)
+                text_width = bbox[2] - bbox[0]
+                
+                if text_width <= max_name_width:
+                   break
+                current_size -= 1
+                
+            font_name = ImageFont.truetype("static/fonts/SourceHanSansJP-Heavy.otf",current_size)   # name 太字
+            bbox = draw.textbbox((0, 0), name_text, font=font_name)
+            text_width = bbox[2] - bbox[0]
+            center_x = 570
+            draw.text((center_x - text_width / 2, 25),name_text,font=font_name,fill="white"
+            )
+
+            # cost
+            cost_text = str(cost)
+            bbox = draw.textbbox((0, 0), cost_text, font=font_cost)
+            text_width = bbox[2] - bbox[0]
+            center_x = 115
+            draw.text((center_x - text_width/2, 48), cost_text, font=font_cost, fill="white")
+
+            # type（白）
+            ctype_text = str(ctype)
+            bbox = draw.textbbox((0, 0), ctype_text, font=font_type)
+            text_width = bbox[2] - bbox[0]
+            center_x = 150
+            draw.text((center_x - text_width/2, 867), ctype_text, font=font_type, fill="black")
+
+            # skill（黒・自動折り返し）
+            skill_text = str(skill)
+            max_skill_width=870
+            wrapped_lines=[]
+
+            #入力した改行も維持する
+            for line in skill_text.split("\n"):
+                current_line=""
+                for char in line:
+                    test_line=current_line+char
+                    bbox=draw.textbbox((0,0),test_line,font=font_skill)
+                    text_width=bbox[2]-bbox[0]
+                    if text_width <=max_skill_width:
+                        current_line=test_line
+                    else:
+                        if current_line:wrapped_lines.append(current_line)
+                        current_line=char
+                if current_line:wrapped_lines.append(current_line)
+            wrapped_skill="\n".join(wrapped_lines)
+            if template_name == "full_text.png":
+                skill_x=80
+                skill_y=200
+            else:
+                skill_x=60
+                skill_y=950
+            draw.multiline_text((skill_x,skill_y),wrapped_skill,font=font_skill,fill="black",spacing=12)
+
+            st.image(card, width=320 , caption="生成されたカード")
+
+            # ダウンロード用バッファ
+            buf = io.BytesIO()
+            card.save(buf, format="PNG")
+            byte_im = buf.getvalue()
+
+            # ダウンロードボタン
+            st.download_button(
+                label="カードをダウンロードする",
+                data=byte_im,
+                file_name=f"{name}.png",
+                mime="image/png"
+            )
+
+
+# 🟦 タブ2：A4印刷シート
+with tab_a4:
+    st.header("A4印刷用シート作成")
+    st.write("カード生成画面でダウンロードしたPNGファイルをアップロードして、A4サイズに9枚並べて印刷できます。")
+
+    uploaded_png_files = st.file_uploader(
+        "A4に並べるカードのPNGファイルを選択（複数可）",
+        type=["png"],
+        accept_multiple_files=True,
+        key="png_loader_a4"
+    )
+
+    png_names = [file.name for file in uploaded_png_files] if uploaded_png_files else []
+
+    selected_png_names = st.multiselect(
+        "A4に並べるカードを選択（最大9枚）",
+        png_names,
+        max_selections=9
+    )
+
+    if st.button("A4シートを作成する"):
+        if len(selected_png_names) == 0:
+            st.warning("カードを選んでください")
+        else:
+            # A4サイズ（300dpi）
+            a4 = Image.new("RGBA", (2480, 3508), "white")
+
+            # 余白なしのピッタリ座標
+            positions = [
+                (0, 0), (744, 0), (1488, 0),
+                (0, 1040), (744, 1040), (1488, 1040),
+                (0, 2080), (744, 2080), (1488, 2080),
+            ]
+
+            for i, name in enumerate(selected_png_names):
+                file = next(f for f in uploaded_png_files if f.name == name)
+                card_img = Image.open(file).convert("RGBA")
+
+                # 印刷サイズに縮小（88×63mm → 744×1040px）
+                card_img = card_img.resize((744, 1040))
+
+                a4.paste(card_img, positions[i])
+
+            # プレビュー表示
+            st.image(a4, caption="A4印刷シート", width="stretch")
+
+            # PNGダウンロード
+            buf_png = io.BytesIO()
+            a4.save(buf_png, format="PNG")
+            st.download_button(
+                "PNGでダウンロード",
+                buf_png.getvalue(),
+                file_name="a4_sheet.png",
+                mime="image/png"
+            )
+
+            # PDFダウンロード
+            buf_pdf = io.BytesIO()
+            a4.save(buf_pdf, format="PDF")
+            st.download_button(
+                "PDFでダウンロード",
+                buf_pdf.getvalue(),
+                file_name="a4_sheet.pdf",
+                mime="application/pdf"
+            )
