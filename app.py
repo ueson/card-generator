@@ -116,6 +116,10 @@ h1::after {
 label[data-testid="stWidgetLabel"] {
     color: black !important;
 }
+div[data-testid="stTabs"] button span {
+    color: black !important;
+}
+
 }
 </style>
 """ % font_data,unsafe_allow_html=True)
