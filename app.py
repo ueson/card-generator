@@ -20,21 +20,6 @@ st.markdown("""
     max-width:95%%;
     }
 }
-[data-testid="stAppViewContainer"] {
-    background: #F5F5F5 !important;
-}
-/* ▼ Streamlitのメインコンテナ：薄グレー */
-section.main {
-    background-color: #F5F5F5 !important;
-}
-/* ▼ サイドバー：薄グレー*/
-div[data-testid="stSidebar"] {
-    background-color: #F5F5F5 !important;
-}
-/* ▼ タイトル・見出し：濃いグレー */
-h1, h2, h3, h4, h5, h6 {
-    color: #333333 !important;
-}
 
 /* Streamlitボタン：水色 */
 div.stButton > button {
@@ -111,13 +96,6 @@ h1::after {
         margin-left: 0 !important;
         margin-right: 0 !important;
     }
-}
-
-label[data-testid="stWidgetLabel"] {
-    color: black !important;
-}
-div[data-testid="stTabs"] button span {
-    color: black !important;
 }
 
 }
