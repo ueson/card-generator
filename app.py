@@ -400,6 +400,27 @@ with tab_card:
 
 
 # 🟦 タブ2：A4印刷シート
+
+# ▼トンボ描画
+def draw_tombo(a4_image, x, y, card_w=744, card_h=1040):
+    draw = ImageDraw.Draw(a4_image)
+
+    line_len = 25      # トンボの長さ
+    line_w = 2         # トンボの太さ
+    fill_color = "#000000"
+    # 左上（十字）
+    draw.line((x - line_len, y, x + line_len, y), fill=fill_color, width=line_w)
+    draw.line((x, y - line_len, x, y + line_len), fill=fill_color, width=line_w)
+    # 右上
+    draw.line((x + card_w - line_len, y, x + card_w + line_len, y), fill=fill_color, width=line_w)
+    draw.line((x + card_w, y - line_len, x + card_w, y + line_len), fill=fill_color, width=line_w)
+    # 左下
+    draw.line((x - line_len, y + card_h, x + line_len, y + card_h), fill=fill_color, width=line_w)
+    draw.line((x, y + card_h - line_len, x, y + card_h + line_len), fill=fill_color, width=line_w)
+    # 右下
+    draw.line((x + card_w - line_len, y + card_h, x + card_w + line_len, y + card_h), fill=fill_color, width=line_w)
+    draw.line((x + card_w, y + card_h - line_len, x + card_w, y + card_h + line_len), fill=fill_color, width=line_w)
+
 with tab_a4:
     st.write("カード生成画面でダウンロードしたPNGファイルをアップロードして、A4サイズに9枚並べて印刷できます。")
 
@@ -418,28 +439,57 @@ with tab_a4:
         max_selections=9
     )
 
+    # ▼ 余白モード選択
+    margin_mode = st.radio(
+        "余白モードを選ぶ",
+        ["余白なし（ピッタリ配置）", "余白あり（スペースあり）"],
+        horizontal=True
+    )
+    margin = 20  # 余白ありのときのスペース量
+
+    # ▼ 余白なし座標
+    positions_no_margin = [
+        (0, 0), (744, 0), (1488, 0),
+        (0, 1040), (744, 1040), (1488, 1040),
+        (0, 2080), (744, 2080), (1488, 2080),
+    ]
+    # ▼ 余白あり座標
+    positions_with_margin = [
+        (margin, margin),
+        (744 + margin*2, margin),
+        (1488 + margin*3, margin),
+
+        (margin, 1040 + margin*2),
+        (744 + margin*2, 1040 + margin*2),
+        (1488 + margin*3, 1040 + margin*2),
+
+        (margin, 2080 + margin*3),
+        (744 + margin*2, 2080 + margin*3),
+        (1488 + margin*3, 2080 + margin*3),
+    ]
+
+    # ▼ モードに応じて座標を決定
+    positions = positions_no_margin if margin_mode == "余白なし（ピッタリ配置）" else positions_with_margin
+
+    # ▼ A4シート生成ボタン
     if st.button("A4シートを作成する"):
         if len(selected_png_names) == 0:
             st.warning("カードを選んでください")
         else:
-            # A4サイズ（300dpi）
             a4 = Image.new("RGBA", (2480, 3508), "white")
-
-            # 余白なし座標
-            positions = [
-                (0, 0), (744, 0), (1488, 0),
-                (0, 1040), (744, 1040), (1488, 1040),
-                (0, 2080), (744, 2080), (1488, 2080),
-            ]
 
             for i, name in enumerate(selected_png_names):
                 file = next(f for f in uploaded_png_files if f.name == name)
                 card_img = Image.open(file).convert("RGBA")
-
-                # 印刷サイズに縮小（88×63mm → 744×1040px）
                 card_img = card_img.resize((744, 1040))
 
-                a4.paste(card_img, positions[i])
+                # ▼ ここで positions を使う（必ず定義済み）
+                x, y = positions[i]
+                a4.paste(card_img, (x, y))
+
+                # ▼ 余白ありのときだけトンボを描く
+                if margin_mode == "余白あり（スペースあり）":
+                    draw_tombo(a4, x, y)
 
             # プレビュー表示
             st.image(a4, caption="A4印刷シート", width="stretch")
