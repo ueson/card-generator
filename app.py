@@ -38,11 +38,13 @@ div.stButton > button:hover {
 h1 {
     font-family: 'MavenPro',
     sans-serif !important;
+    white-space: nowrap !important;
+    padding: 30px 0 !important;
+    margin-top:-45px !important;
     position: relative;
 }
 
 /* スマホ用 */
-/* スマホ */
 @media(max-width:1000px){
 [data-testid="stMainBlockContainer"]{
     max-width:95%%;
