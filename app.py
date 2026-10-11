@@ -9,7 +9,7 @@ import json
 with open("static/fonts/MavenPro-VariableFont_wght.ttf", "rb") as f:
     font_data = base64.b64encode (f.read()).decode()
 
-# テンプレートカテゴリ辞書
+# テンプレートカテゴリ
 TEMPLATE_CATEGORIES = {
     "スタンダード": "templates/standard",
     "メタリック": "templates/metal",
@@ -106,19 +106,18 @@ with tab_card:
     frame = Image.open(template_path).convert("RGBA")
 
     # ▼テンプレートごとの設定
-    if category == "standard":
+    if category == "スタンダード":
         image_size=(980,845)
         image_position=(40,120)
-    elif category  in ("full_image", "metal"):
-        # フルイメージ系（光沢のある背景）
+    elif category  in ("フル画像", "メタリック"):
         image_size = (980, 1300)
         image_position = (40, 120)
-    elif category == "full_text":
+    elif category == "フルテキスト":
         image_size=(0,0)
         image_position=(0,0)
 
     # ▼テンプレートのプレビュー表示
-    st.image(template_path, caption=template_name, width=150)
+    st.image(template_path, width=150)
 
     # ▼ 保存済みカード一覧
     st.markdown("#### 📜 カードデータを読み込む")
