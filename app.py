@@ -42,12 +42,10 @@ h1 {
 }
 
 /* スマホ用 */
-@media (max-width:1000px){
-    .block-container {
-        padding-top: 0.2rem !important;
-    }
-    [data-testid="stImage"]img{
-        max-width:90vw !important;
+/* スマホ */
+@media(max-width:1000px){
+[data-testid="stMainBlockContainer"]{
+    max-width:95%%;
     }
     h1 {
         width: fit-content;
