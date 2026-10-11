@@ -9,6 +9,17 @@ import json
 with open("static/fonts/MavenPro-VariableFont_wght.ttf", "rb") as f:
     font_data = base64.b64encode (f.read()).decode()
 
+# テンプレートカテゴリ辞書
+TEMPLATE_CATEGORIES = {
+    "スタンダード": "templates/standard",
+    "メタリック": "templates/metal",
+    "フル画像":"templates/full_image",
+    "フルテキスト":"templates/full_text"
+}
+# PNG一覧取得関数
+def list_templates(folder):
+    return [f for f in os.listdir(folder) if f.endswith(".png")]
+
 st.markdown("""
 <style>
 [data-testid="stMainBlockContainer"]{
@@ -79,32 +90,35 @@ tab_card, tab_a4 = st.tabs([" カード生成 ", " A4印刷シート "])
 # 🟥 タブ1：カード生成
 with tab_card:
 
-    # ▼テンプレート選択（日本語表示）
-    template_options = {
-        "RED": "standard_red.png",
-        "BLUE":"standard_blue.png",
-        "YELLOW":"standard_yellow.png",
-        "GREEN":"standard_green.png",
-        "GRAY":"standard_gray.png",
-        "フルイメージ":"full_image.png",
-        "フルテキスト":"full_text.png"
-    }
-    template_label = st.selectbox("テンプレートを選ぶ", list(template_options.keys()))
-    template_name = template_options[template_label]
+    # テンプレート選択
+    category = st.selectbox("テンプレートカテゴリー", list(TEMPLATE_CATEGORIES.keys()))
+    folder = TEMPLATE_CATEGORIES[category]
+    template_list = list_templates(folder)
+
+    template_list = sorted(list_templates(folder))
+    def display_name(filename):
+        name = filename.lstrip("0123456789_")
+        return name.replace(".png", "")
+    display_dict = {display_name(f): f for f in template_list}
+    template_label = st.selectbox("テンプレートを選ぶ", list(display_dict.keys()))
+    template_name = display_dict[template_label]
+    template_path = os.path.join(folder, template_name)
+    frame = Image.open(template_path).convert("RGBA")
 
     # ▼テンプレートごとの設定
-    if template_name.startswith("standard_"):
+    if category == "standard":
         image_size=(980,845)
         image_position=(40,120)
-    elif template_name =="full_image.png":
-        image_size=(980,1300)
-        image_position=(40,120)     
-    elif template_name =="full_text.png":
+    elif category  in ("full_image", "metal"):
+        # フルイメージ系（光沢のある背景）
+        image_size = (980, 1300)
+        image_position = (40, 120)
+    elif category == "full_text":
         image_size=(0,0)
         image_position=(0,0)
 
     # ▼テンプレートのプレビュー表示
-    st.image(f"template/{template_name}", caption=f"{template_label} のプレビュー", width=150)
+    st.image(template_path, caption=template_name, width=150)
 
     # ▼ 保存済みカード一覧
     st.markdown("#### 📜 カードデータを読み込む")
@@ -137,12 +151,11 @@ with tab_card:
                     )
                 else:
                     st.session_state["loaded_image_bytes"] = None
-
+                    
                 # テンプレートを復元
                 st.session_state["selected_template"] = loaded_data.get(
                     "template_name", ""
                 )
-
                 # 画像アップロード欄をリセット
                 st.session_state["uploader_version"] += 1
 
@@ -184,6 +197,7 @@ with tab_card:
         "パワー",
         min_value=0,
         max_value=99999,
+        value=0,
         step=1,
         key="power"
     )
@@ -192,7 +206,7 @@ with tab_card:
         height=200,
         key="skill"
     )
-    if template_name=="full_text.png":
+    if category == "full_text":
         uploaded_img=None
     else:
         if "uploader_version" not in st.session_state:
@@ -202,7 +216,7 @@ with tab_card:
             type=["png", "jpg", "jpeg"],
             key=f"image_uploader_{st.session_state['uploader_version']}"
         )
-    frame = Image.open(f"template/{template_name}").convert("RGBA")
+    frame = Image.open(template_path).convert("RGBA")
     card = Image.new("RGBA", frame.size, (255, 255, 255, 0))
 
     if uploaded_img:
@@ -275,7 +289,7 @@ with tab_card:
             else: art=Image.new("RGBA",image_size,(0,0,0,0))
 
             # テンプレート読み込み
-            frame = Image.open(f"template/{template_name}").convert("RGBA")
+            frame = Image.open(template_path).convert("RGBA")
 
             # 絵を縦横比を維持してリサイズ＆トリミング
             # ▼ フルテキストテンプレートの場合は画像処理をスキップ
