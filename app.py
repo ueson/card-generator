@@ -49,7 +49,7 @@ h1 {
 [data-testid="stMainBlockContainer"]{
     max-width:95%%;
     .block-container {
-        padding-top: 0.2rem !important;
+        padding-top: 0 !important;
     }
     h1 {
         width: fit-content;
