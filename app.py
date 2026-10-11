@@ -52,8 +52,6 @@ h1 {
         padding-top: 0 !important;
     }
     h1 {
-        width: fit-content;
-        margin: 0 auto;
         font-size: clamp(26px, 5vw, 50px) !important;
         white-space: normal !important;
         letter-spacing: -1px;
