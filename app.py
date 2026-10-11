@@ -44,7 +44,6 @@ div.stButton > button:hover {
 h1 {
     font-family: 'MavenPro',
     sans-serif !important;
-    line-height:1.1 !important;
     position: relative;
 }
 
@@ -52,12 +51,11 @@ h1 {
 @media (max-width:1000px){
     [data-testid="stImage"]img{
         max-width:90vw !important;
-        height:auto !important;
     }
     h1 {
         width: fit-content;
         margin: 0 auto;
-        font-size: clamp(23px, 5vw, 50px) !important;
+        font-size: clamp(25px, 5vw, 50px) !important;
         white-space: normal !important;
         letter-spacing: -1px;
         padding-left: 0 !important;
