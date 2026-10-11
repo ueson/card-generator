@@ -42,34 +42,8 @@ div.stButton > button:hover {
 }
 
 h1 {
-    background: transparent !important;
-    
     font-family: 'MavenPro',
     sans-serif !important;
-    text-align: center;
-    font-size: clamp(40px,4vw,70px) !important;
-    line-height:1.1 !important;
-    color: #333333 !important;
-    text-shadow: 2px 2px 0px #c0c0c0!important;
-    
-    white-space: nowrap !important;
-    padding: 30px 0 !important;
-    margin-top:-65px !important;
-}
-
-h1 {
-    position: relative;
-}
-
-/* タイトル下の黄色ライン */
-h1::after {
-    content: "";
-    display: block;
-    width: 100%%;
-    height: 6px;
-    background: #FFCC00; 
-    margin: 12px auto 0;
-    border-radius: 3px;
 }
 
 /* スマホ用 */
@@ -78,31 +52,13 @@ h1::after {
         max-width:90vw !important;
         height:auto !important;
     }
-    h1 {
-        width: fit-content;
-        margin: 0 auto;
-        text-align: center !important;
-        font-size: clamp(26px, 5vw, 50px) !important;
-        white-space: normal !important; /* ← nowrapだと横幅が広がる */
-        letter-spacing: -1px;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-    }
-
-    h1::after {
-        width: 95%% !important;
-        height: 5px;
-        margin-top: 10px;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-    }
 }
 
 }
 </style>
 """ % font_data,unsafe_allow_html=True)
 
-st.title("ORIGINAL CARD MAKER", width="stretch")
+st.title("⚖  ORIGINAL CARD MAKER", width="stretch")
 
 # 📄 タブ構成（カード生成 / A4印刷シート）
 tab_card, tab_a4 = st.tabs([" カード生成 ", " A4印刷シート "])
