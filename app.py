@@ -44,6 +44,7 @@ div.stButton > button:hover {
 h1 {
     font-family: 'MavenPro',
     sans-serif !important;
+    line-height:1.1 !important;
     position: relative;
 }
 
@@ -56,7 +57,7 @@ h1 {
     h1 {
         width: fit-content;
         margin: 0 auto;
-        font-size: clamp(26px, 5vw, 50px) !important;
+        font-size: clamp(23px, 5vw, 50px) !important;
         white-space: normal !important;
         letter-spacing: -1px;
         padding-left: 0 !important;
@@ -65,7 +66,7 @@ h1 {
     h1::after {
         width: 95%% !important;
         height: 5px;
-        margin-top: 10px;
+        margin-top: 0;
         margin-left: 0 !important;
         margin-right: 0 !important;
     }
@@ -75,7 +76,7 @@ h1 {
 </style>
 """ % font_data,unsafe_allow_html=True)
 
-st.title("⚖  ORIGINAL CARD MAKER", width="stretch")
+st.title("⚖  CARD GENERATOR", width="stretch")
 
 # 📄 タブ構成（カード生成 / A4印刷シート）
 tab_card, tab_a4 = st.tabs([" カード生成 ", " A4印刷シート "])
