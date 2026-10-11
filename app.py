@@ -46,6 +46,8 @@ h1 {
 @media(max-width:1000px){
 [data-testid="stMainBlockContainer"]{
     max-width:95%%;
+    .block-container {
+        padding-top: 0.2rem !important;
     }
     h1 {
         width: fit-content;
