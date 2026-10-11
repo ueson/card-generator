@@ -14,12 +14,6 @@ st.markdown("""
 [data-testid="stMainBlockContainer"]{
     max-width:52%%;
 }
-/* スマホ */
-@media(max-width:1000px){
-[data-testid="stMainBlockContainer"]{
-    max-width:95%%;
-    }
-}
 
 /* Streamlitボタン：水色 */
 div.stButton > button {
@@ -49,13 +43,16 @@ h1 {
 
 /* スマホ用 */
 @media (max-width:1000px){
+    .block-container {
+        padding-top: 0.2rem !important;
+    }
     [data-testid="stImage"]img{
         max-width:90vw !important;
     }
     h1 {
         width: fit-content;
         margin: 0 auto;
-        font-size: clamp(25px, 5vw, 50px) !important;
+        font-size: clamp(26px, 5vw, 50px) !important;
         white-space: normal !important;
         letter-spacing: -1px;
         padding-left: 0 !important;
