@@ -40,9 +40,11 @@ div.stButton > button:hover {
     font-family: 'MavenPro';
     src: url("data:font/ttf;base64,%s")format('truetype');
 }
+
 h1 {
     font-family: 'MavenPro',
     sans-serif !important;
+    position: relative;
 }
 
 /* スマホ用 */
@@ -50,6 +52,22 @@ h1 {
     [data-testid="stImage"]img{
         max-width:90vw !important;
         height:auto !important;
+    }
+    h1 {
+        width: fit-content;
+        margin: 0 auto;
+        font-size: clamp(26px, 5vw, 50px) !important;
+        white-space: normal !important;
+        letter-spacing: -1px;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    h1::after {
+        width: 95%% !important;
+        height: 5px;
+        margin-top: 10px;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
     }
 }
 
