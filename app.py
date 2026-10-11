@@ -40,7 +40,6 @@ div.stButton > button:hover {
     font-family: 'MavenPro';
     src: url("data:font/ttf;base64,%s")format('truetype');
 }
-
 h1 {
     font-family: 'MavenPro',
     sans-serif !important;
