@@ -12,6 +12,7 @@ with open("static/fonts/MavenPro-VariableFont_wght.ttf", "rb") as f:
 # テンプレートカテゴリ
 TEMPLATE_CATEGORIES = {
     "スタンダード": "templates/standard",
+    "ゴールド":"templates/gold",
     "メタリック": "templates/metal",
     "フル画像":"templates/full_image",
     "フルテキスト":"templates/full_text"
@@ -106,7 +107,7 @@ with tab_card:
     frame = Image.open(template_path).convert("RGBA")
 
     # ▼テンプレートごとの設定
-    if category == "スタンダード":
+    if category in ("スタンダード","ゴールド"):
         image_size=(980,845)
         image_position=(40,120)
     elif category  in ("フル画像", "メタリック"):
@@ -117,7 +118,7 @@ with tab_card:
         image_position=(0,0)
 
     # テンプレート毎の文字色
-    if category == "メタリック":
+    if category in ("ゴールド","メタリック"):
         text_color = "white"
     else:
         text_color = "black"
