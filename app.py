@@ -116,6 +116,12 @@ with tab_card:
         image_size=(0,0)
         image_position=(0,0)
 
+    # テンプレート毎の文字色
+    if category == "メタリック":
+        text_color = "white"
+    else:
+        text_color = "black"
+
     # ▼テンプレートのプレビュー表示
     st.image(template_path, width=150)
 
@@ -141,7 +147,7 @@ with tab_card:
                 st.session_state["cost"] = loaded_data.get("cost", 0)
                 st.session_state["ctype"] = loaded_data.get("ctype", "")
                 st.session_state["skill"] = loaded_data.get("skill", "")
-                st.session_state["power"]=loaded_data.get("power","")
+                st.session_state["power"]=loaded_data.get("power",0)
 
                 # 画像データを復元
                 if loaded_data.get("image"):
@@ -170,6 +176,8 @@ with tab_card:
     # 初期値を Session State にセット（初回のみ）
     if "name_font_size" not in st.session_state:
         st.session_state["name_font_size"] = 65
+    if "power" not in st.session_state:
+        st.session_state["power"] = 0
 
     # スライダー（value は session_state の値を使う）
     name_font_size = st.slider(
@@ -196,7 +204,6 @@ with tab_card:
         "パワー",
         min_value=0,
         max_value=99999,
-        value=0,
         step=1,
         key="power"
     )
@@ -332,7 +339,13 @@ with tab_card:
             bbox = draw.textbbox((0, 0), name_text, font=font_name)
             text_width = bbox[2] - bbox[0]
             center_x = 570
-            draw.text((center_x - text_width / 2, 25),name_text,font=font_name,fill="white"
+            draw.text(
+                (center_x - text_width / 2, 25),
+                name_text,
+                font=font_name,
+                fill="white",
+                stroke_width=4,  
+                stroke_fill="#5e5e5e"
             )
 
             # cost
@@ -340,30 +353,42 @@ with tab_card:
             bbox = draw.textbbox((0, 0), cost_text, font=font_cost)
             text_width = bbox[2] - bbox[0]
             center_x = 115
-            draw.text((center_x - text_width/2, 48), cost_text, font=font_cost, fill="white")
+            draw.text(
+                (center_x - text_width/2, 48),
+                cost_text,
+                font=font_cost,
+                fill="white",
+                stroke_width=4,  
+                stroke_fill="#5e5e5e"
+            )
 
             # type
             ctype_text = str(ctype)
             bbox = draw.textbbox((0, 0), ctype_text, font=font_type)
             text_width = bbox[2] - bbox[0]
             center_x = 150
-            draw.text((center_x - text_width/2, 867), ctype_text, font=font_type, fill="black")
+            draw.text((center_x - text_width/2, 867), ctype_text, font=font_type, fill=text_color)
 
             # power
             if show_power:
-                power_text = str(power)
+                try:
+                    power_value = int(power)
+                except (TypeError, ValueError):
+                    power_value = 0
+
+                power_text = str(power_value)
                 bbox = draw.textbbox((0, 0), power_text, font=font_power)
                 text_width = bbox[2] - bbox[0]
                 center_x = 870
                 draw.text(
-                    (center_x - text_width/2,1350),
+                    (center_x - text_width / 2, 1350),
                     power_text,
-                    font=font_power, 
-                    fill="white",  
-                    stroke_width=3,  
-                    stroke_fill="#5e5e5e" 
+                    font=font_power,
+                    fill="white",
+                    stroke_width=3,
+                    stroke_fill="#5e5e5e",
                 )
-
+    
             # skill（黒・自動折り返し）
             skill_text = str(skill)
             max_skill_width=870
