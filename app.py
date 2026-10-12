@@ -17,6 +17,31 @@ TEMPLATE_CATEGORIES = {
     "フル画像":"templates/full_image",
     "フルテキスト":"templates/full_text"
 }
+
+# ▼テンプレートごとの文字装飾設定
+STROKE_STYLE = {
+    "スタンダード": {
+        "stroke_width": 4,
+        "stroke_fill": "#5e5e5e"
+    },
+    "ゴールド": {
+        "stroke_width":6,
+        "stroke_fill":"black"
+    },
+    "フル画像": {
+        "stroke_width": 4,
+        "stroke_fill": "#5e5e5e"
+    },
+    "メタリック": {
+        "stroke_width": 6,
+        "stroke_fill": "black"
+    },
+    "フルテキスト": {
+        "stroke_width": 4,
+        "stroke_fill": "#5e5e5e"
+    }
+}
+
 # PNG一覧取得関数
 def list_templates(folder):
     return [f for f in os.listdir(folder) if f.endswith(".png")]
@@ -122,6 +147,10 @@ with tab_card:
         text_color = "white"
     else:
         text_color = "black"
+
+    style = STROKE_STYLE.get(category, STROKE_STYLE["スタンダード"])
+    stroke_width = style["stroke_width"]
+    stroke_fill = style["stroke_fill"]
 
     # ▼テンプレートのプレビュー表示
     st.image(template_path, width=150)
@@ -345,8 +374,8 @@ with tab_card:
                 name_text,
                 font=font_name,
                 fill="white",
-                stroke_width=4,  
-                stroke_fill="#5e5e5e"
+                stroke_width=stroke_width,
+                stroke_fill=stroke_fill
             )
 
             # cost
@@ -359,8 +388,8 @@ with tab_card:
                 cost_text,
                 font=font_cost,
                 fill="white",
-                stroke_width=4,  
-                stroke_fill="#5e5e5e"
+                stroke_width=stroke_width,
+                stroke_fill=stroke_fill
             )
 
             # type
@@ -368,7 +397,14 @@ with tab_card:
             bbox = draw.textbbox((0, 0), ctype_text, font=font_type)
             text_width = bbox[2] - bbox[0]
             center_x = 150
-            draw.text((center_x - text_width/2, 867), ctype_text, font=font_type, fill=text_color)
+            draw.text(
+                (center_x - text_width/2, 867),
+                ctype_text,
+                font=font_type,
+                fill=text_color,
+                stroke_width=stroke_width,
+                stroke_fill=stroke_fill
+            )
 
             # power
             if show_power:
@@ -386,8 +422,8 @@ with tab_card:
                     power_text,
                     font=font_power,
                     fill="white",
-                    stroke_width=3,
-                    stroke_fill="#5e5e5e",
+                    stroke_width=stroke_width,
+                    stroke_fill=stroke_fill
                 )
     
             # skill（黒・自動折り返し）
