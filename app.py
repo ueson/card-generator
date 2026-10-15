@@ -133,11 +133,11 @@ with tab_card:
 
     # ▼テンプレートごとの設定
     if category in ("スタンダード","ゴールド"):
-        image_size=(980,845)
-        image_position=(40,120)
+        image_size=(950,775)
+        image_position=(40,145)
     elif category  in ("フル画像", "メタリック"):
-        image_size = (980, 1300)
-        image_position = (40, 120)
+        image_size = (950, 1250)
+        image_position = (40, 145)
     elif category == "フルテキスト":
         image_size=(0,0)
         image_position=(0,0)
@@ -349,7 +349,7 @@ with tab_card:
             font_cost = ImageFont.truetype("static/fonts/Jersey15-Regular.ttf", 100)   # cost 太字
             font_type = ImageFont.truetype("static/fonts/SourceHanSansJP-Heavy.otf", 30)   # 属性
             font_power = ImageFont.truetype("static/fonts/Jersey15-Regular.ttf",70)  #パワー
-            font_skill = ImageFont.truetype("static/fonts/SourceHanSansJP-Medium.otf", 27) # スキル
+            font_skill = ImageFont.truetype("static/fonts/SourceHanSansJP-Medium.otf", 30) # スキル
 
             # name
             name_text = str(name)
@@ -476,7 +476,7 @@ def draw_tombo(a4_image, x, y, card_w=744, card_h=1040):
     draw = ImageDraw.Draw(a4_image)
 
     line_len = 25      # トンボの長さ
-    line_w = 2         # トンボの太さ
+    line_w = 1         # トンボの太さ
     fill_color = "#000000"
     # 左上（十字）
     draw.line((x - line_len, y, x + line_len, y), fill=fill_color, width=line_w)
