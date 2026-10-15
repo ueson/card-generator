@@ -11,9 +11,9 @@ with open("static/fonts/MavenPro-VariableFont_wght.ttf", "rb") as f:
 
 # テンプレートカテゴリ
 TEMPLATE_CATEGORIES = {
+    "メタリック": "templates/metal",
     "スタンダード": "templates/standard",
     "ゴールド":"templates/gold",
-    "メタリック": "templates/metal",
     "フル画像":"templates/full_image",
     "フルテキスト":"templates/full_text"
 }
@@ -132,10 +132,13 @@ with tab_card:
     frame = Image.open(template_path).convert("RGBA")
 
     # ▼テンプレートごとの設定
-    if category in ("スタンダード","ゴールド"):
+    if category in ("スタンダード","ゴールド","メタリック"):
         image_size=(950,775)
         image_position=(40,145)
-    elif category  in ("フル画像", "メタリック"):
+    elif category in ("メタリック"):
+        image_size=(850,630)
+        image_position=(60,220)
+    elif category  in ("フル画像" ):
         image_size = (950, 1250)
         image_position = (40, 145)
     elif category == "フルテキスト":
@@ -351,26 +354,70 @@ with tab_card:
             font_power = ImageFont.truetype("static/fonts/Jersey15-Regular.ttf",70)  #パワー
             font_skill = ImageFont.truetype("static/fonts/SourceHanSansJP-Medium.otf", 30) # スキル
 
+            # ▼テンプレート別の座標設定
+            POSITION_CONFIG = {
+                "スタンダード": {
+                    "name": (570, 25),
+                    "cost": (115, 48),
+                    "type": (150, 867),
+                    "power": (870, 1350),
+                    "skill": (60, 950)
+                },
+                "ゴールド": {
+                    "name": (570, 25),
+                    "cost": (115, 48),
+                    "type": (150, 867),
+                    "power": (870, 1350),
+                    "skill": (60, 950)
+                },
+                "フル画像": {
+                    "name": (570, 25),
+                    "cost": (115, 48),
+                    "type": (150, 867),
+                    "power": (870, 1350),
+                    "skill": (60, 950)
+                },
+                "フルテキスト": {
+                    "name": (570, 25),
+                    "cost": (115, 48),
+                    "type": (150, 867),
+                    "power": (870, 1350),
+                    "skill": (80, 200)  # ← フルテキストだけ別位置
+                },
+                "メタリック": {
+                    # ← メタリックだけ別位置
+                    "name": (600, 70),
+                    "cost": (160, 70),
+                    "type": (175, 825),
+                    "power": (870, 1345),
+                    "skill": (80, 890)
+                }
+            }
+
+            # ▼カテゴリ名を取得
+            category = category
+
             # name
             name_text = str(name)
             max_name_width = 760
             current_size = name_font_size
-            
+
             while current_size >= 20:
-                test_font = ImageFont.truetype("static/fonts/SourceHanSansJP-Heavy.otf",current_size)
+                test_font = ImageFont.truetype("static/fonts/SourceHanSansJP-Heavy.otf", current_size)
                 bbox = draw.textbbox((0, 0), name_text, font=test_font)
                 text_width = bbox[2] - bbox[0]
-                
+
                 if text_width <= max_name_width:
-                   break
+                    break
                 current_size -= 1
-                
-            font_name = ImageFont.truetype("static/fonts/SourceHanSansJP-Heavy.otf",current_size)   # name 太字
+
+            font_name = ImageFont.truetype("static/fonts/SourceHanSansJP-Heavy.otf", current_size)
             bbox = draw.textbbox((0, 0), name_text, font=font_name)
             text_width = bbox[2] - bbox[0]
-            center_x = 570
+
+            name_x, name_y = POSITION_CONFIG[category]["name"]
             draw.text(
-                (center_x - text_width / 2, 25),
+                (name_x - text_width / 2, name_y),
                 name_text,
                 font=font_name,
                 fill="white",
@@ -382,9 +429,10 @@ with tab_card:
             cost_text = str(cost)
             bbox = draw.textbbox((0, 0), cost_text, font=font_cost)
             text_width = bbox[2] - bbox[0]
-            center_x = 115
+
+            cost_x, cost_y = POSITION_CONFIG[category]["cost"]
             draw.text(
-                (center_x - text_width/2, 48),
+                (cost_x - text_width / 2, cost_y),
                 cost_text,
                 font=font_cost,
                 fill="white",
@@ -396,9 +444,10 @@ with tab_card:
             ctype_text = str(ctype)
             bbox = draw.textbbox((0, 0), ctype_text, font=font_type)
             text_width = bbox[2] - bbox[0]
-            center_x = 150
+
+            type_x, type_y = POSITION_CONFIG[category]["type"]
             draw.text(
-                (center_x - text_width/2, 867),
+                (type_x - text_width / 2, type_y),
                 ctype_text,
                 font=font_type,
                 fill=text_color,
@@ -416,42 +465,49 @@ with tab_card:
                 power_text = str(power_value)
                 bbox = draw.textbbox((0, 0), power_text, font=font_power)
                 text_width = bbox[2] - bbox[0]
-                center_x = 870
+
+                power_x, power_y = POSITION_CONFIG[category]["power"]
                 draw.text(
-                    (center_x - text_width / 2, 1350),
+                    (power_x - text_width / 2, power_y),
                     power_text,
                     font=font_power,
                     fill="white",
                     stroke_width=stroke_width,
                     stroke_fill=stroke_fill
                 )
-    
-            # skill（黒・自動折り返し）
-            skill_text = str(skill)
-            max_skill_width=870
-            wrapped_lines=[]
 
-            #入力した改行も維持する
+            # skill（折り返し）
+            skill_text = str(skill)
+            max_skill_width = 870
+            wrapped_lines = []
+
             for line in skill_text.split("\n"):
-                current_line=""
+                current_line = ""
                 for char in line:
-                    test_line=current_line+char
-                    bbox=draw.textbbox((0,0),test_line,font=font_skill)
-                    text_width=bbox[2]-bbox[0]
-                    if text_width <=max_skill_width:
-                        current_line=test_line
+                    test_line = current_line + char
+                    bbox = draw.textbbox((0, 0), test_line, font=font_skill)
+                    text_width = bbox[2] - bbox[0]
+
+                    if text_width <= max_skill_width:
+                        current_line = test_line
                     else:
-                        if current_line:wrapped_lines.append(current_line)
-                        current_line=char
-                if current_line:wrapped_lines.append(current_line)
-            wrapped_skill="\n".join(wrapped_lines)
-            if template_name == "full_text.png":
-                skill_x=80
-                skill_y=200
-            else:
-                skill_x=60
-                skill_y=950
-            draw.multiline_text((skill_x,skill_y),wrapped_skill,font=font_skill,fill="black",spacing=12)
+                        if current_line:
+                            wrapped_lines.append(current_line)
+                        current_line = char
+                if current_line:
+                    wrapped_lines.append(current_line)
+
+            wrapped_skill = "\n".join(wrapped_lines)
+
+            skill_x, skill_y = POSITION_CONFIG[category]["skill"]
+
+            draw.multiline_text(
+                (skill_x, skill_y),
+                wrapped_skill,
+                font=font_skill,
+                fill="black",
+                spacing=12
+            )
 
             st.image(card, width=320 , caption="生成されたカード")
 
