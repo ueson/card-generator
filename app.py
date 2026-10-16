@@ -136,8 +136,8 @@ with tab_card:
         image_size=(950,775)
         image_position=(40,145)
     elif category in ("メタリック"):
-        image_size=(760,420)
-        image_position=(90,260)
+        image_size=(900,700)
+        image_position=(70,160)
     elif category  in ("フル画像" ):
         image_size = (950, 1250)
         image_position = (40, 145)
