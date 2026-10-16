@@ -339,7 +339,7 @@ with tab_card:
                     art,
                     image_size,
                     method=Image.Resampling.LANCZOS,
-                    centering=(0.5, 0.4)
+                    centering=(0.5, 0.2)
                 ).convert("RGBA")
 
             # 画像がある場合だけ貼り付け
