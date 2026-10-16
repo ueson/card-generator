@@ -132,7 +132,7 @@ with tab_card:
     frame = Image.open(template_path).convert("RGBA")
 
     # ▼テンプレートごとの設定
-    if category in ("スタンダード","ゴールド","メタリック"):
+    if category in ("スタンダード","ゴールド"):
         image_size=(950,775)
         image_position=(40,145)
     elif category in ("メタリック"):
