@@ -12,9 +12,9 @@ with open("static/fonts/MavenPro-VariableFont_wght.ttf", "rb") as f:
 # テンプレートカテゴリ
 TEMPLATE_CATEGORIES = {
     "メタリック": "templates/metal",
-    "スタンダード": "templates/standard",
     "フル画像":"templates/full_image",
     "フルテキスト":"templates/full_text",
+    "スタンダード": "templates/standard"
 }
 
 # ▼テンプレートごとの文字装飾設定
