@@ -13,9 +13,9 @@ with open("static/fonts/MavenPro-VariableFont_wght.ttf", "rb") as f:
 TEMPLATE_CATEGORIES = {
     "メタリック": "templates/metal",
     "スタンダード": "templates/standard",
-    "ゴールド":"templates/gold",
     "フル画像":"templates/full_image",
-    "フルテキスト":"templates/full_text"
+    "フルテキスト":"templates/full_text",
+    "ゴールド":"templates/gold",
 }
 
 # ▼テンプレートごとの文字装飾設定
@@ -23,10 +23,6 @@ STROKE_STYLE = {
     "スタンダード": {
         "stroke_width": 4,
         "stroke_fill": "#5e5e5e"
-    },
-    "ゴールド": {
-        "stroke_width":6,
-        "stroke_fill":"black"
     },
     "フル画像": {
         "stroke_width": 5,
@@ -37,9 +33,13 @@ STROKE_STYLE = {
         "stroke_fill": "black"
     },
     "フルテキスト": {
-        "stroke_width": 4,
-        "stroke_fill": "#5e5e5e"
-    }
+        "stroke_width": 5,
+        "stroke_fill": "black"
+    },
+    "ゴールド": {
+        "stroke_width":6,
+        "stroke_fill":"black"
+    },
 }
 
 # PNG一覧取得関数
@@ -141,12 +141,12 @@ with tab_card:
     elif category  in ("フル画像" ):
         image_size = (950, 1250)
         image_position = (40, 145)
-    elif category == "フルテキスト":
+    elif category  in ("フルテキスト"):
         image_size=(0,0)
         image_position=(0,0)
 
     # テンプレート毎の文字色
-    if category in ("ゴールド","メタリック","フル画像"):
+    if category in ("ゴールド","メタリック","フル画像","フルテキスト"):
         text_color = "white"
     else:
         text_color = "black"
@@ -245,7 +245,7 @@ with tab_card:
         height=200,
         key="skill"
     )
-    if category == "full_text":
+    if category == "フルテキスト":
         uploaded_img=None
     else:
         if "uploader_version" not in st.session_state:
@@ -316,7 +316,7 @@ with tab_card:
         save_card()
 
     if st.button("カードを生成する"):
-        if uploaded_img or st.session_state.get("loaded_image_bytes") or template_name == "full_text.png":
+        if uploaded_img or st.session_state.get("loaded_image_bytes") or category == "フルテキスト":
 
             if uploaded_img:
                 art = Image.open(uploaded_img).convert("RGBA")
@@ -332,7 +332,7 @@ with tab_card:
 
             # 絵を縦横比を維持してリサイズ＆トリミング
             # ▼ フルテキストテンプレートの場合は画像処理をスキップ
-            if template_name == "full_text.png":
+            if category == "フルテキスト":
                 resized_art = None
             else:
                 resized_art = ImageOps.fit(
@@ -378,11 +378,11 @@ with tab_card:
                     "skill": (80, 890)
                 },
                 "フルテキスト": {
-                    "name": (570, 25),
-                    "cost": (115, 48),
-                    "type": (150, 867),
-                    "power": (870, 1350),
-                    "skill": (80, 200)  # ← フルテキストだけ別位置
+                    "name": (600, 70),
+                    "cost": (160, 70),
+                    "type": (175, 825),
+                    "power": (870, 1345),
+                    "skill": (100, 230)  # ← フルテキストだけ別位置
                 },
                 "メタリック": {
                     "name": (600, 70),
@@ -477,7 +477,7 @@ with tab_card:
 
             # skill（折り返し）
             skill_text = str(skill)
-            max_skill_width = 870
+            max_skill_width = 850
             wrapped_lines = []
 
             for line in skill_text.split("\n"):
@@ -631,7 +631,10 @@ with tab_a4:
 
             # PDFダウンロード
             buf_pdf = io.BytesIO()
-            a4.save(buf_pdf, format="PDF")
+            a4.save(
+                buf_pdf,
+                format="PDF",
+            )
             st.download_button(
                 "PDFでダウンロード",
                 buf_pdf.getvalue(),
