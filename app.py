@@ -570,27 +570,37 @@ with tab_a4:
         ["余白なし（ピッタリ配置）", "余白あり（スペースあり）"],
         horizontal=True
     )
-    margin = 20  # 余白ありのときのスペース量
+    margin = 20
+    safe_margin_left = 50   # 左端見切れ対策
+    safe_margin_top = 50    # 上端見切れ対策
 
     # ▼ 余白なし座標
     positions_no_margin = [
-        (0, 0), (744, 0), (1488, 0),
-        (0, 1040), (744, 1040), (1488, 1040),
-        (0, 2080), (744, 2080), (1488, 2080),
+        (safe_margin_left, 0 + safe_margin_top),
+        (744 + safe_margin_left, 0 + safe_margin_top),
+        (1488 + safe_margin_left, 0 + safe_margin_top),
+
+        (safe_margin_left, 1040 + safe_margin_top),
+        (744 + safe_margin_left, 1040 + safe_margin_top),
+        (1488 + safe_margin_left, 1040 + safe_margin_top),
+
+        (safe_margin_left, 2080 + safe_margin_top),
+        (744 + safe_margin_left, 2080 + safe_margin_top),
+        (1488 + safe_margin_left, 2080 + safe_margin_top),
     ]
     # ▼ 余白あり座標
     positions_with_margin = [
-        (margin, margin),
-        (744 + margin*2, margin),
-        (1488 + margin*3, margin),
+        (safe_margin_left + margin, safe_margin_top + margin),
+        (safe_margin_left + 744 + margin*2, safe_margin_top + margin),
+        (safe_margin_left + 1488 + margin*3, safe_margin_top + margin),
 
-        (margin, 1040 + margin*2),
-        (744 + margin*2, 1040 + margin*2),
-        (1488 + margin*3, 1040 + margin*2),
+        (safe_margin_left + margin, safe_margin_top + 1040 + margin*2),
+        (safe_margin_left + 744 + margin*2, safe_margin_top + 1040 + margin*2),
+        (safe_margin_left + 1488 + margin*3, safe_margin_top + 1040 + margin*2),
 
-        (margin, 2080 + margin*3),
-        (744 + margin*2, 2080 + margin*3),
-        (1488 + margin*3, 2080 + margin*3),
+        (safe_margin_left + margin, safe_margin_top + 2080 + margin*3),
+        (safe_margin_left + 744 + margin*2, safe_margin_top + 2080 + margin*3),
+        (safe_margin_left + 1488 + margin*3, safe_margin_top + 2080 + margin*3),
     ]
 
     # ▼ モードに応じて座標を決定
