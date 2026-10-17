@@ -29,8 +29,8 @@ STROKE_STYLE = {
         "stroke_fill":"black"
     },
     "フル画像": {
-        "stroke_width": 4,
-        "stroke_fill": "#5e5e5e"
+        "stroke_width": 5,
+        "stroke_fill": "black"
     },
     "メタリック": {
         "stroke_width": 6,
@@ -146,7 +146,7 @@ with tab_card:
         image_position=(0,0)
 
     # テンプレート毎の文字色
-    if category in ("ゴールド","メタリック"):
+    if category in ("ゴールド","メタリック","フル画像"):
         text_color = "white"
     else:
         text_color = "black"
@@ -371,11 +371,11 @@ with tab_card:
                     "skill": (60, 950)
                 },
                 "フル画像": {
-                    "name": (570, 25),
-                    "cost": (115, 48),
-                    "type": (150, 867),
-                    "power": (870, 1350),
-                    "skill": (60, 950)
+                    "name": (600, 70),
+                    "cost": (160, 70),
+                    "type": (175, 825),
+                    "power": (870, 1345),
+                    "skill": (80, 890)
                 },
                 "フルテキスト": {
                     "name": (570, 25),
@@ -385,7 +385,6 @@ with tab_card:
                     "skill": (80, 200)  # ← フルテキストだけ別位置
                 },
                 "メタリック": {
-                    # ← メタリックだけ別位置
                     "name": (600, 70),
                     "cost": (160, 70),
                     "type": (175, 825),
