@@ -15,7 +15,6 @@ TEMPLATE_CATEGORIES = {
     "スタンダード": "templates/standard",
     "フル画像":"templates/full_image",
     "フルテキスト":"templates/full_text",
-    "ゴールド":"templates/gold",
 }
 
 # ▼テンプレートごとの文字装飾設定
@@ -35,10 +34,6 @@ STROKE_STYLE = {
     "フルテキスト": {
         "stroke_width": 5,
         "stroke_fill": "black"
-    },
-    "ゴールド": {
-        "stroke_width":6,
-        "stroke_fill":"black"
     },
 }
 
@@ -132,7 +127,7 @@ with tab_card:
     frame = Image.open(template_path).convert("RGBA")
 
     # ▼テンプレートごとの設定
-    if category in ("スタンダード","ゴールド"):
+    if category in ("スタンダード"):
         image_size=(950,775)
         image_position=(40,145)
     elif category in ("メタリック"):
@@ -357,13 +352,6 @@ with tab_card:
             # ▼テンプレート別の座標設定
             POSITION_CONFIG = {
                 "スタンダード": {
-                    "name": (570, 25),
-                    "cost": (115, 48),
-                    "type": (150, 867),
-                    "power": (870, 1350),
-                    "skill": (60, 950)
-                },
-                "ゴールド": {
                     "name": (570, 25),
                     "cost": (115, 48),
                     "type": (150, 867),
